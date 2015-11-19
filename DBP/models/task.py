@@ -6,7 +6,7 @@ from sqlalchemy import Column,  Unicode, Text, DateTime, Integer, BLOB, ForeignK
 from sqlalchemy.orm import relationship
 from sqlalchemy import Table, MetaData
 from DBP.models.instance import OriginalData, TaskData, ParsedData
-
+from sqlalchemy.orm import mapper
 from DBP.models.user import User
 
 
@@ -61,7 +61,7 @@ class Task(Base):
 		#task data
 		
 		taskTableName = self.prefix + "_TaskData"
-		parsed = Table(taskTableName,metadata,
+		task = Table(taskTableName,metadata,
 			Column('id', Integer, primary_key=True),
 			Column('submittername', Unicode(100)),
 			Column('parsedid', Integer, ForeignKey(parsedTableName+'.id')),
@@ -69,3 +69,25 @@ class Task(Base):
 			)
 
 		metadata.create_all(bind= engine)
+
+
+		self.original = type(originalTableName,(OriginalData,),{})
+		self.parsed = type(parsedTableName,(ParsedData,),{})
+		self.task = type(taskTableName,(TaskData,),{})
+
+		mapper(self.original, original)
+		mapper(self.parsed, parsed)
+		mapper(self.task, task)
+
+
+		
+
+
+
+
+
+
+
+
+
+
