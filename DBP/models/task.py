@@ -26,6 +26,24 @@ class Task(Base):
 
 
 
+	def setTables(self):
+		metadata = Base.metadata
+		originalTableName = self.prefix + "_OriginalData"
+		parsedTableName = self.prefix + "_ParsedData"
+		taskTableName = self.prefix + "_TaskData"
+		original = Table(originalTableName, metadata, autoload=True, autoload_with=engine)
+		parsed = Table(parsedTableName, metadata, autoload=True, autoload_with=engine)
+		task = Table(taskTableName, metadata, autoload=True, autoload_with=engine)
+		
+		self.original = type(originalTableName,(OriginalData,),{})
+		self.parsed = type(parsedTableName,(ParsedData,),{})
+		self.task = type(taskTableName,(TaskData,),{})
+		mapper(self.original, original)
+		mapper(self.parsed, parsed)
+		mapper(self.task, task)
+
+
+
 	def generateTables(self,mappinginfo):
 		metadata = Base.metadata
 		#original data
@@ -74,7 +92,6 @@ class Task(Base):
 		self.original = type(originalTableName,(OriginalData,),{})
 		self.parsed = type(parsedTableName,(ParsedData,),{})
 		self.task = type(taskTableName,(TaskData,),{})
-
 		mapper(self.original, original)
 		mapper(self.parsed, parsed)
 		mapper(self.task, task)
