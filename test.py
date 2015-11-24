@@ -15,3 +15,5 @@ t = Task("test","TS")
 d = ["data1","data2","data3"]
 
 t.generateTables(d)
+print t.original
+t.setTables()
