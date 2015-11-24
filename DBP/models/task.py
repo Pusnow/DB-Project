@@ -16,8 +16,8 @@ class Task(Base):
 	__tablename__ = 'Task'
 	name = Column(Unicode(100),primary_key = True)
 	information = Column(Text)
-	duration = Column(DateTime)
-	prefix = Column(Unicode(10), unique = True)
+	duration = Column(DateTime, nullable = False)
+	prefix = Column(Unicode(10), unique = True, nullable = False)
 
 
 	def __init__(self,name,prefix):
@@ -34,7 +34,7 @@ class Task(Base):
 		original = Table(originalTableName, metadata, autoload=True, autoload_with=engine)
 		parsed = Table(parsedTableName, metadata, autoload=True, autoload_with=engine)
 		task = Table(taskTableName, metadata, autoload=True, autoload_with=engine)
-		
+
 		self.original = type(originalTableName,(OriginalData,),{})
 		self.parsed = type(parsedTableName,(ParsedData,),{})
 		self.task = type(taskTableName,(TaskData,),{})
@@ -61,17 +61,17 @@ class Task(Base):
 
 		parsed = Table(parsedTableName,metadata,
 			Column('id', Integer, primary_key=True),
-			Column('duration', DateTime),
-			Column('count', Integer),
-			Column('file',BLOB),
-			Column('tuplenum',Integer),
-			Column('duplicatetuplenum',Integer),
-			Column('originalid', Integer, ForeignKey(originalTableName+'.id')),
-			Column('evaluator', Integer, ForeignKey('User.id')),
-			Column('status',Enum('Waiting','Evaluated')),
-			Column('score',Integer),
-			Column('pnp',Enum('Pass','Nonpass')),
-			Column('submitter', Integer, ForeignKey('User.id'))
+			Column('duration', DateTime, nullable = False),
+			Column('count', Integer, nullable = False, server_default = "0"),
+			Column('file',BLOB, nullable = False),
+			Column('tuplenum',Integer, nullable = False),
+			Column('duplicatetuplenum',Integer, nullable = False),
+			Column('originalid', Integer, ForeignKey(originalTableName+'.id'), nullable = False),
+			Column('evaluator', Unicode(30), ForeignKey('User.id'), nullable = False),
+			Column('status',Enum('Waiting','Evaluated'), nullable = False, server_default = 'Waiting'),
+			Column('score',Integer, nullable = False, server_default= "0"),
+			Column('pnp',Enum('Pass','Nonpass'), nullable = False, server_default = 'Nonpass'),
+			Column('submitter', Unicode(30), ForeignKey('User.id'), nullable = False)
 
 			)
 
@@ -81,8 +81,8 @@ class Task(Base):
 		taskTableName = self.prefix + "_TaskData"
 		task = Table(taskTableName,metadata,
 			Column('id', Integer, primary_key=True),
-			Column('submittername', Unicode(100)),
-			Column('parsedid', Integer, ForeignKey(parsedTableName+'.id')),
+			Column('submittername', Unicode(100), nullable = False),
+			Column('parsedid', Integer, ForeignKey(parsedTableName+'.id'), nullable = False),
 			*(Column(colname, Integer) for colname in mappinginfo)
 			)
 
