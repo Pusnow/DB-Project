@@ -15,5 +15,6 @@ t = Task("test","TS")
 d = ["data1","data2","data3"]
 
 t.generateTables(d)
-print t.original
+a =  t.original()
+print dir(a)
 t.setTables()

@@ -52,7 +52,8 @@ class Task(Base):
 		
 		original = Table(originalTableName,metadata,
 			Column('id', Integer, primary_key=True),
-			*(Column(colname, Integer) for colname in mappinginfo)
+			*(Column("sch_"+colname, Integer) for colname in mappinginfo)
+			,autoload=True, autoload_with=engine
 			)
 
 
@@ -72,7 +73,7 @@ class Task(Base):
 			Column('score',Integer, nullable = False, server_default= "0"),
 			Column('pnp',Enum('Pass','Nonpass'), nullable = False, server_default = 'Nonpass'),
 			Column('submitter', Unicode(30), ForeignKey('User.id'), nullable = False)
-
+			,autoload=True, autoload_with=engine
 			)
 
 
@@ -83,7 +84,8 @@ class Task(Base):
 			Column('id', Integer, primary_key=True),
 			Column('submittername', Unicode(100), nullable = False),
 			Column('parsedid', Integer, ForeignKey(parsedTableName+'.id'), nullable = False),
-			*(Column(colname, Integer) for colname in mappinginfo)
+			*(Column("sch_"+colname, Integer) for colname in mappinginfo)
+			,autoload=True, autoload_with=engine
 			)
 
 		metadata.create_all(bind= engine)
@@ -97,6 +99,10 @@ class Task(Base):
 		mapper(self.task, task)
 
 
+
+
+	def newOriginal(self,mappinginfo):
+		pass
 		
 
 
