@@ -17,10 +17,9 @@
   </md-toolbar>
   <div layout="row" flex>
     <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+      <md-button class="">홈</md-button>
       <md-button class="">로그인</md-button>
-      <md-button class="">관리자 메뉴</md-button>
-      <md-button class="">제출자 메뉴</md-button>
-      <md-button class="">평가자 메뉴</md-button>
+      <md-button class="">회원가입</md-button>
     </md-sidenav>
     <div layout="column" flex="50" id="content">
       <md-card>
@@ -29,11 +28,11 @@
         <div layout layout-sm="column">
         <md-input-container flex>
           <label>아이디</label>
-          <input ng-model="user.firstName">
+          <input ng-model="userid">
         </md-input-container>
         <md-input-container flex>
           <label>비밀번호</label>
-          <input ng-model="theMax">
+          <input ng-model="userpw">
         </md-input-container>
       </div>
       </md-card-content>
@@ -58,7 +57,7 @@
 
     <!-- Angular Material Javascript now available via Google CDN; version 1.0.0-rc4 used here -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js')}}"></script>
   </body>
 
 </html>
