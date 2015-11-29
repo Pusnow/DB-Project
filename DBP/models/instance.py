@@ -78,7 +78,7 @@ class ParsedData (object):
 		self.nth = nth
 		self.duration_start = duration_start
 		self.duration_end = duration_end
-		self.file = csvfile
+		self.file = csvfile.getvalue()
 		self.tuplenum = tuplenum
 		self.duplicatetuplenum = duplicatetuplenum
 
