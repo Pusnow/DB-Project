@@ -2,7 +2,7 @@
 
 from DBP.models import Base, engine, session
 from sqlalchemy import Column,  Unicode, Text, DateTime, Integer, BLOB, ForeignKey, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, relation
 from sqlalchemy import Table, MetaData
 from DBP.models.instance import OriginalData, TaskData, ParsedData
 from sqlalchemy.orm import mapper
@@ -19,8 +19,9 @@ class Task(Base):
 	prefix = Column(Unicode(10), unique = True, nullable = False)
 
 
-	def __init__(self,name,prefix):
+	def __init__(self,name,duration,prefix):
 		self.name = name[:100]
+		self.duration = duration
 		self.prefix = prefix[:10]
 
 
@@ -68,6 +69,9 @@ class Task(Base):
 		#parsed data
 		parsedTableName = self.prefix + "_ParsedData"
 
+
+
+
 		self.parsedtable = Table(parsedTableName,metadata,
 			Column('id', Integer, primary_key=True,autoincrement = True),
 			Column('duration_start', DateTime, nullable = False),
@@ -77,11 +81,11 @@ class Task(Base):
 			Column('tuplenum',Integer, nullable = False),
 			Column('duplicatetuplenum',Integer, nullable = False),
 			Column('originalid', Integer, ForeignKey(originalTableName+'.id'), nullable = False),
-			Column('evaluator', Integer, ForeignKey('User.id'), nullable = False),
+			Column('evaluatorid', Integer, ForeignKey('User.id'),  nullable = False),
 			Column('status',Enum('Waiting','Evaluated'), nullable = False, server_default = 'Waiting'),
 			Column('score',Integer, nullable = False, server_default= "0"),
 			Column('pnp',Enum('Pass','Nonpass'), nullable = False, server_default = 'Nonpass'),
-			Column('submitter', Integer, ForeignKey('User.id'), nullable = False)
+			Column('submitterid', Integer, ForeignKey('User.id'), nullable = False)
 			#,autoload=True, autoload_with=engine
 			)
 
@@ -100,6 +104,7 @@ class Task(Base):
 		metadata.create_all(bind= engine)
 
 
+
 		self.original = type(originalTableName,(OriginalData,),{})
 		self.parsed = type(parsedTableName,(ParsedData,),{})
 		self.task = type(taskTableName,(TaskData,),{})
@@ -108,7 +113,7 @@ class Task(Base):
 			'original': relationship(self.original, backref='parsed')
 		})
 		mapper(self.task, self.tasktable, properties={
-			'parsed': relationship(self.parsed, backref='task')
+			'parsed': relationship(self.parsed, backref='task'),
 		})
 
 		self.original.parsedclass = self.parsed
@@ -133,9 +138,14 @@ class Task(Base):
 				info.append({"name" : col.name, "type" : col.type })
 
 		return info
-		
-		
 
+
+	def dict(self):
+		return {"prefix" : self.prefix, "name": self.name, "information" : self.information, "duration" : self.duration}
+
+	@staticmethod
+	def getTasks(start=0,end=10):
+		return session.query(Task).order_by(Task.name)[start:end]
 
 
 

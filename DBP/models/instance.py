@@ -2,7 +2,7 @@
 
 
 from DBP.models import Base, session
-from DBP.models.user import randomEvaluator
+from DBP.models.user import User
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.inspection import inspect
 import csv
@@ -34,11 +34,7 @@ class OriginalData (object):
 
 	def mapList(self):
 		maplist = list()
-		for col in inspect(self.__class__).columns:
-			if not col.name[:3] == u"sch":
-				continue
-
-
+		for col in filter(lambda x: x.name[:3] == u"sch", inspect(self.__class__).columns ):
 			maplist.append(getattr(self,col.name))
 		return maplist
 
@@ -61,14 +57,16 @@ class OriginalData (object):
 			counter += 1
 
 
-		evaluator = randomEvaluator()
+		evaluator = User.randomEvaluator()
 		
 		parsedmodel =  self.parsedclass(nth,duration_start,duration_end,csvwrite,counter, counter - len(dupset))
-		parsedmodel.submitter = submitter.id
-		parsedmodel.evaluator = evaluator.id
+		parsedmodel.submitterid = submitter.id
+		parsedmodel.evaluatorid = evaluator.id
 		self.parsed.append(parsedmodel)
 
 		session.commit()
+
+		return parsedmodel
 
 
 
@@ -83,9 +81,40 @@ class ParsedData (object):
 		self.duplicatetuplenum = duplicatetuplenum
 
 
+	def parsecsv(self):
+		csvread = io.StringIO(unicode(self.file))
+		reader = csv.reader(csvread, delimiter=',', quotechar="'")
+		parsedlist = list()
+		for row in reader:
+			tsmodel = self.taskclass(User.getUser(self.submitterid).name, self.id)
+			for (column, data) in zip(filter(lambda x: x.name[:3] == u"sch", inspect(self.taskclass).columns ), row):
+				setattr(tsmodel,column.name, data)
+
+			parsedlist.append(tsmodel)
+
+		return parsedlist
+
+
+	def insertcsv(self):
+		if self.pnp != "Pass":
+			return False
+
+		session.bulk_save_objects(self.parsecsv())
+		session.commit()
+		return True
+
+
+
+
+
+
+
 
 
 class TaskData (object):
-	pass
+	
+	def __init__ (self,submittername, parsedid):
+		self.submittername = submittername
+		self.parsedid = parsedid
 
 
