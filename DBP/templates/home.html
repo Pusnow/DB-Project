@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.css">
 
   </head>
-  <body layout="column" ng-controller="AppController as vm">
+  <body layout="column" ng-controller="HomeController">
   <md-toolbar layout="row">
     <div class="md-toolbar-tools">
       <md-button ng-click="vm.toggleSidenav('left')" hide-gt-sm class="md-icon-button">
@@ -28,16 +28,16 @@
         <div layout layout-sm="column">
         <md-input-container flex>
           <label>아이디</label>
-          <input ng-model="userid">
+          <input ng-model="loginid">
         </md-input-container>
         <md-input-container flex>
           <label>비밀번호</label>
-          <input ng-model="userpw">
+          <input ng-model="password">
         </md-input-container>
       </div>
       </md-card-content>
       <md-card-actions layout="row" layout-align="end center">
-        <md-button>로그인</md-button>
+        <md-button ng-click = "login()">로그인</md-button>
       </md-card-actions>
     </md-card>
 
