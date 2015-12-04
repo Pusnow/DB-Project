@@ -3,92 +3,49 @@
 
     <!-- Angular Material CSS now available via Google CDN; version 1.0.0-rc4 used here -->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css')}}">
 
   </head>
   <body layout="column" ng-controller="AdminController">
-  <md-toolbar layout="row">
-    <div class="md-toolbar-tools">
-      <md-button ng-click="vm.toggleSidenav('left')" hide-gt-sm class="md-icon-button">
-        <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg">
-        </md-icon>
-      </md-button>
-      <h1>Database Term Project: &nbsp; PostgreSQL 조</h1>
-    </div>
-  </md-toolbar>
-  <div layout="row" flex>
-    <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
-      <md-button class="" ng-click="showtasks()">태스크 관리</md-button>
-      <md-button class="" ng-click="showusers()">화원 관리</md-button>
-    </md-sidenav>
-
-    <div ng-if="menu=='task'" class="animate-if" layout="column" flex layout-padding id="content">
-      <md-toolbar class="md-menu-toolbar">
+  
+  <md-toolbar class="md-menu-toolbar">
     <div layout="row">
       <md-toolbar-filler layout layout-align="center center">
         <md-icon md-svg-icon="call:chat"></md-icon>
       </md-toolbar-filler>
       <div>
-        <h2 class="md-toolbar-tools">Untitled document</h2>
+        <h2 class="md-toolbar-tools">Database Term Project: &nbsp; PostgreSQL 조 - 관리자 패널</h2>
         <md-menu-bar>
           <md-menu>
             <button ng-click="$mdOpenMenu()">
-              File
+              태스크관리
             </button>
             <md-menu-content>
               <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('share', $event)">
-                  Share...
-                </md-button>
-              </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item>
-                <md-menu>
-                  <md-button ng-click="$mdOpenMenu()">New</md-button>
-                  <md-menu-content>
-                    <md-menu-item><md-button ng-click="ctrl.sampleAction('New Document', $event)">Document</md-button></md-menu-item>
-                    <md-menu-item><md-button ng-click="ctrl.sampleAction('New Spreadsheet', $event)">Spreadsheet</md-button></md-menu-item>
-                    <md-menu-item><md-button ng-click="ctrl.sampleAction('New Presentation', $event)">Presentation</md-button></md-menu-item>
-                    <md-menu-item><md-button ng-click="ctrl.sampleAction('New Form', $event)">Form</md-button></md-menu-item>
-                    <md-menu-item><md-button ng-click="ctrl.sampleAction('New Drawing', $event)">Drawing</md-button></md-menu-item>
-                  </md-menu-content>
-                </md-menu>
-              </md-menu-item>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('Open', $event)">
-                  Open...
-                  <span class="md-alt-text"> </span>
+                <md-button ng-click="shownewtask()">
+                  새로운 태스크
                 </md-button>
               </md-menu-item>
               <md-menu-item>
-                <md-button disabled="disabled" ng-click="ctrl.sampleAction('Rename', $event)">
-                  Rename
-                </md-button>
-              </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('Print', $event)">
-                  Print
-                  <span class="md-alt-text"></span>
-                </md-button>
+                  <md-button ng-click="showtasks()">태스크 보기</md-button>
               </md-menu-item>
             </md-menu-content>
           </md-menu>
           <md-menu>
             <button ng-click="$mdOpenMenu()">
-              Edit
+              회원관리
             </button>
             <md-menu-content>
               <md-menu-item class="md-indent">
-                <md-icon md-svg-icon="undo"></md-icon>
-                <md-button ng-click="ctrl.sampleAction('undo', $event)">
-                  Undo
+                <md-button ng-click="shownewuser()">
+                  새로운 회원
                   <span class="md-alt-text"></span>
                 </md-button>
               </md-menu-item>
               <md-menu-item class="md-indent">
                 <md-icon md-svg-icon="redo"></md-icon>
                 <md-button ng-click="ctrl.sampleAction('redo', $event)">
-                  Redo
+                  회원 보기
                   <span class="md-alt-text"></span>
                 </md-button>
               </md-menu-item>
@@ -125,7 +82,7 @@
           </md-menu>
           <md-menu>
             <button ng-click="$mdOpenMenu()">
-              View
+              통계
             </button>
             <md-menu-content>
               <md-menu-item type="checkbox" ng-model="ctrl.settings.printLayout">Print layout</md-menu-item>
@@ -150,12 +107,12 @@
           </md-menu>
           <md-menu>
             <button ng-click="$mdOpenMenu()">
-              Format
+              기타
             </button>
             <md-menu-content>
               <md-menu-item>
                 <md-button ng-click="ctrl.sampleAction('bold', $event)">
-                  Bold
+                  로그아웃
                   <span class="md-alt-text"> </span>
                 </md-button>
               </md-menu-item>
@@ -197,12 +154,225 @@
       </div>
     </div>
   </md-toolbar>
-
-
-
-      </md-content>
+  <md-content ng-if="menu=='home'" class="page-container" flex>
+    
+  </md-content>
+ <md-content ng-if="menu=='newtask'" class="page-container" flex>
+    <div class="page">
+      <h1>새로운 태스크</h1>
+      <div layout layout-sm="column">
+        <md-input-container flex>
+          <label>태스크 이름</label>
+          <input ng-model="task.name">
+        </md-input-container>
+        <md-input-container flex>
+          <label>Prefix</label>
+          <input ng-model="task.prefix">
+        </md-input-container>
+        <md-input-container flex>
+          <label>주기(일)</label>
+          <input ng-model="task.duration">
+        </md-input-container>
+      </div>
+      <md-input-container class="md-block">
+        <label>설명</label>
+        <textarea ng-model="task.information" columns="1" md-maxlength="150" rows="5"></textarea>
+      </md-input-container>
+      
+      <md-chips
+        ng-model="task.schemas"
+        placeholder="+ 스키마 입력"
+        delete-button-label="스키마 삭제"
+        delete-hint="스키마 삭제"
+        secondary-placeholder="스키마 추가"></md-chips>
+    
+      <div layout="row" layout-sm="column" >
+        <md-button flex="50" class="md-raised" ng-click="resetTaskForm()">초기화</md-button>
+        <md-button flex="50" class="md-raised md-primary" ng-click="submitTaskForm()">제출</md-button>
+      </div>
     </div>
+    
+  </md-content>
+  <md-content ng-if="menu=='newuser'" class="page-container" flex>
+    <div class="page">
+      <h1>새로운 사용자</h1>
+      <div layout layout-sm="column">
+        <md-input-container flex>
+          <label>사용자 아이디</label>
+          <input ng-model="user.loginid">
+        </md-input-container>
+        <md-input-container flex>
+          <label>사용자 비밀번호</label>
+          <input ng-model="user.password">
+        </md-input-container>
+        <md-input-container flex>
+          <label>사용자 이름</label>
+          <input ng-model="user.name">
+        </md-input-container>
+      </div>
+      <div layout layout-sm="column">
+        <md-input-container flex>
+          <label>성별</label>
+          <md-select ng-model="user.gender">
+            <md-option ng-repeat="gender in ['남자','여자']" value="{{gender | angular}}">
+              {{gender | angular}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+        <md-input-container flex>
+          <label>전화번호</label>
+          <input ng-model="user.cellphone">
+        </md-input-container>
+        <md-input-container flex>
+          <label>역할</label>
+          <md-select ng-model="user.role">
+            <md-option ng-repeat="role in ['제출자','평가자']" value="{{role | angular}}">
+              {{role | angular}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+        <md-datepicker ng-model="user.birth" md-placeholder="생년월일"></md-datepicker>
+      </div>
+
+      <md-input-container class="md-block">
+        <label>주소</label>
+        <textarea ng-model="task.information" columns="1" md-maxlength="255" rows="5"></textarea>
+      </md-input-container>
+    
+      <div layout="row" layout-sm="column" >
+        <md-button flex="50" class="md-raised" ng-click="shownewuser()">초기화</md-button>
+        <md-button flex="50" class="md-raised md-primary" ng-click="newuser()">제출</md-button>
+      </div>
+    </div>
+    
+  </md-content>
+  <div ng-if="menu=='task'" class="page-container" flex style="height:600px;">
+    <div  class="pagewide" >
+      <h1>태스크 목록</h1>
+      <div  layout="row" >
+        <md-content flex="20" layout-fill>
+          <md-list>
+          <md-list-item class="md-3-line" ng-repeat="task in tasklist" ng-click = "showtask(task.prefix)">
+          <div class="md-list-item-text" layout="column">
+
+            <h3>{{ task.name  | angular}} ({{ task.prefix  | angular}})</h3>
+            <h4>{{ task.duration | angular}}일</h4>
+            <p>{{ task.information | angular}}</p>
+          </div>
+          </md-list-item>
+          </md-list>
+
+
+
+        </md-content>
+        <div flex>
+          <md-tabs class="" md-align-tabs="" layout-fill>
+            <md-tab id="tab1">
+              <md-tab-label>태스크 정보</md-tab-label>
+              <md-tab-body>
+                <md-content layout-fill>
+                  <h2>{{task.name|angular}} ({{task.prefix|angular}})</h2>
+                  <md-input-container flex>
+                    <label>주기(일)</label>
+                    <input ng-model="task.duration">
+                  </md-input-container>
+                  <md-input-container class="md-block">
+                    <label>설명</label>
+                    <textarea ng-model="task.information" columns="1" md-maxlength="150" rows="5"></textarea>
+                  </md-input-container>
+                  <md-list>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>원본데이터타입 수</h3>
+                        <p>{{task.originalnum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>파싱데이터시퀀스 파일 수</h3>
+                        <p>{{task.parsednum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>태스크 데이터 튜플 수</h3>
+                        <p>{{task.tasknum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                  </md-list>
+                </md-content>
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab2" md-on-select ="showneworiginal()">
+              <md-tab-label>새로운 원본 데이터 타입</md-tab-label>
+              <md-tab-body>
+                <h2>{{task.name|angular}} ({{task.prefix|angular}})의 새로운 원본 데이터 타입</h2>
+                <div layout="row">
+                <md-input-container flex>
+                    <label>이름</label>
+                    <input ng-model="original.name">
+                </md-input-container>
+                 <md-input-container flex>
+                   <label>튜플의 길이</label>
+                   <input ng-model="original.length">
+                 </md-input-container>
+                 </div>
+                 <h4>매핑 정보 (다음에 해당하는 위치 정보를 입력)</h4>
+                 <div layout="row">
+                   <md-input-container flex ng-repeat="col in original.schemas">
+                    <label>{{col.label | angular}}</label>
+                    <input ng-model="col.col">
+                  </md-input-container>
+                 </div>
+                 <div layout="row" layout-sm="column" >
+                   <md-button flex="50" class="md-raised" ng-click="showneworiginal()">초기화</md-button>
+                   <md-button flex="50" class="md-raised md-primary" ng-click="submitNewOriginal()">제출</md-button>
+                 </div>
+
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab3"  md-on-select ="showoriginals()">
+              <md-tab-label>원본 데이터 타입 리스트</md-tab-label>
+              <md-tab-body>
+                <h2>{{task.name|angular}} ({{task.prefix|angular}})의 원본 데이터 타입 리스트</h2>
+                <md-list>
+                  <md-list-item class="md-2-line" ng-repeat="ori in originallist" ng-click = "">
+                    <div class="md-list-item-text" layout="column">
+                      <h3>{{ ori.name  | angular}}</h3>
+                      <div layout="row" >
+                        <div ng-repeat="map in ori.mapinfo">
+                          {{ map |angular }}
+                        </div>
+
+                      </div>
+                    </div>
+                    </md-list-item>
+                  </md-list>
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab4">
+              <md-tab-label>파싱 데이터 시퀀스 파일 정보</md-tab-label>
+              <md-tab-body>
+                View for Item #3 <br/>
+                data.selectedIndex = 2;
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab5">
+              <md-tab-label>태스트 데이터 정보</md-tab-label>
+              <md-tab-body>
+                View for Item #3 <br/>
+                data.selectedIndex = 2;
+              </md-tab-body>
+            </md-tab>
+          </md-tabs>
+        </div>
+      </div>
+
+
+    </div>
+    
   </div>
+
 
 
     <!-- Angular Material Dependencies -->

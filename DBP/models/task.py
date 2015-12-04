@@ -8,15 +8,15 @@ from DBP.models.instance import OriginalData, TaskData, ParsedData
 from sqlalchemy.orm import mapper
 from DBP.models.user import User
 
-
+import re
 
 
 class Task(Base):
 	__tablename__ = 'Task'
-	name = Column(Unicode(100),primary_key = True)
+	prefix = Column(Unicode(10), primary_key = True)
+	name = Column(Unicode(100), nullable = False)
 	information = Column(Text)
-	duration = Column(DateTime, nullable = False)
-	prefix = Column(Unicode(10), unique = True, nullable = False)
+	duration = Column(Integer, nullable = False)
 
 
 	def __init__(self,name,duration,prefix):
@@ -35,9 +35,9 @@ class Task(Base):
 		self.parsedtable = Table(parsedTableName, metadata, autoload=True, autoload_with=engine)
 		self.tasktable = Table(taskTableName, metadata, autoload=True, autoload_with=engine)
 
-		self.original = type(originalTableName,(OriginalData,),{})
-		self.parsed = type(parsedTableName,(ParsedData,),{})
-		self.task = type(taskTableName,(TaskData,),{})
+		self.original = type(str(originalTableName),(OriginalData,),{})
+		self.parsed = type(str(parsedTableName),(ParsedData,),{})
+		self.task = type(str(taskTableName),(TaskData,),{})
 		mapper(self.original, self.originaltable, properties={
 			'parsed': relationship(self.parsed, backref='original')
 		})
@@ -55,8 +55,8 @@ class Task(Base):
 		metadata = Base.metadata
 		#original data
 
+
 		originalTableName = self.prefix + "_OriginalData"
-		
 		self.originaltable = Table(originalTableName,metadata,
 			Column('id', Integer, primary_key=True,autoincrement = True),
 			Column('length', Integer),
@@ -64,7 +64,6 @@ class Task(Base):
 			*(Column("sch_"+colname, Integer) for colname in mappinginfo)
 			#,autoload=True, autoload_with=engine
 			)
-
 
 		#parsed data
 		parsedTableName = self.prefix + "_ParsedData"
@@ -97,7 +96,7 @@ class Task(Base):
 			Column('id', Integer, primary_key=True,autoincrement = True),
 			Column('submittername', Unicode(100), nullable = False),
 			Column('parsedid', Integer, ForeignKey(parsedTableName+'.id'), nullable = False),
-			*(Column("sch_"+colname, Integer) for colname in mappinginfo)
+			*(Column("sch_"+colname, Unicode(100)) for colname in mappinginfo)
 			#,autoload=True, autoload_with=engine
 			)
 
@@ -105,9 +104,9 @@ class Task(Base):
 
 
 
-		self.original = type(originalTableName,(OriginalData,),{})
-		self.parsed = type(parsedTableName,(ParsedData,),{})
-		self.task = type(taskTableName,(TaskData,),{})
+		self.original = type(str(originalTableName),(OriginalData,),{})
+		self.parsed = type(str(parsedTableName),(ParsedData,),{})
+		self.task = type(str(taskTableName),(TaskData,),{})
 		mapper(self.original, self.originaltable)
 		mapper(self.parsed, self.parsedtable, properties={
 			'original': relationship(self.original, backref='parsed')
@@ -119,7 +118,7 @@ class Task(Base):
 		self.original.parsedclass = self.parsed
 		self.parsed.taskclass = self.task
 
-
+		return True
 
 
 
@@ -135,7 +134,7 @@ class Task(Base):
 		info = list()
 		for col in self.tasktable.columns:
 			if col.name[:3]== "sch":
-				info.append({"name" : col.name, "type" : col.type })
+				info.append(col.name[4:])
 
 		return info
 
@@ -143,10 +142,108 @@ class Task(Base):
 	def dict(self):
 		return {"prefix" : self.prefix, "name": self.name, "information" : self.information, "duration" : self.duration}
 
+
+	def getInfo(self):
+		self.setTables()
+		data = self.dict()
+		data["schemas"] = self.getMapInfo()
+		
+		data["originalnum"] = session.query(self.original).count()
+		data["parsednum"] = session.query(self.parsed).count()
+		data["tasknum"] = session.query(self.task).count()
+		
+
+		return data
+
+
+	def getOriginals(self):
+		return session.query(self.original).order_by(self.original.id).all()
+
+	@staticmethod
+	def checkPrefix(prefix):
+		return session.query(Task).filter(Task.prefix == prefix).count() != 0
+
+
+	@staticmethod
+	def newTask(data):
+		task = Task(data["name"],data["duration"],data["prefix"])
+		task.information = data["information"]
+		session.add(task)
+		
+		if task.generateTables(data["schemas"]):
+			session.commit()
+			
+		return task
+
+	@staticmethod
+	def checkData(data):
+
+		if len(data["schemas"]) == 0 :
+			return u"스키마 정보가 없습니다."
+		
+		if not re.match("^[A-Za-z0-9_-]+$", data["prefix"]):
+			return u"Prefix는영어,숫자, _ 문자열이야 합니다."
+		try :
+			int (data["duration"])
+		except:
+			return u"기간은 숫자이어야 합니다."
+
+		if Task.checkPrefix(data["prefix"]):
+			return u"이미 존재하는 Prefix입니다."
+
+
+		for col in data["schemas"] :
+			if not re.match("^[A-Za-z0-9_-]+$", col):
+				return u"스키마는 영어,숫자, _ 문자열이야 합니다."
+
+
+		return ""
+
+	@staticmethod
+	def checkOriginal(data):
+
+		if len(data["schemas"]) == 0 :
+			return u"스키마 정보가 없습니다."
+		
+		maplist = map(lambda x : x["col"],data["schemas"])
+
+
+		if len(maplist) != len(set(maplist)):
+			return u"매핑정보가 중복되었습니다."
+
+		for mapinfo in maplist:
+			if mapinfo >= data["length"]:
+				return u"매핑정보가 길이보다 큽니다."
+			try :
+				int(mapinfo)
+			except:
+				return u"매핑정보는 숫자이어야 합니다."
+
+
+		try :
+			int (data["length"])
+		except:
+			return u"길이는 숫자이어야 합니다."
+
+		if not Task.checkPrefix(data["prefix"]):
+			return u"존재하지 않는 prefix입니다"
+
+
+
+
+
+		return ""
+
 	@staticmethod
 	def getTasks(start=0,end=10):
-		return session.query(Task).order_by(Task.name)[start:end]
+		return session.query(Task).order_by(Task.prefix)[start:end]
 
+	@staticmethod
+	def getTask(prefix):
+		task =  session.query(Task).filter(Task.prefix == prefix).first()
+		if task :
+			task.setTables()
+		return task
 
 
 

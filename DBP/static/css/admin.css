@@ -1,0 +1,45 @@
+.page-container {
+  background-color: #f1f1f1;
+  padding: 32px; }
+.page {
+  margin: 0 auto;
+  background-color: white;
+  padding: 24px;
+  max-width: 680px;
+  box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.25); }
+.page h1 {
+  font-size: 1.8rem;
+  margin-top: 0;
+  font-weight: normal; }
+.page p {
+  line-height: 1.6rem; }
+
+
+
+.pagewide {
+  margin: 0 auto;
+  background-color: white;
+  padding: 24px;
+  box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.25); }
+
+
+.pagewide h1 {
+  font-size: 1.8rem;
+  margin-top: 0;
+  font-weight: normal; }
+.pagewide p {
+  line-height: 1.6rem; }
+
+.numinfo {
+  float: left;
+  width: 33%;
+  box-sizing: border-box;
+  padding: 0 8px; }
+.numinfo .md-item-text {
+  padding: 8px;
+  background: #f0f0f0;
+  border-radius: 3px; }
+.numinfo .md-item-text h3,
+.numinfo .md-item-text p {
+  padding: 0;
+  margin: 0; }

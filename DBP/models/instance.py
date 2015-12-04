@@ -21,16 +21,17 @@ class OriginalData (object):
 		if len(mappinginfo) != len(cols) -3:
 			raise TypeError
 
-		for col in cols:
-
-			if not col.name[:3] == u"sch":
-				continue
+		for col in mappinginfo:
+			setattr(self,str( u"sch_"+col["label"]),int(col["col"]))
 
 
-			if int(mappinginfo[col.name]) >= self.length :
-				raise TypeError
-			setattr(self,col.name,int(mappinginfo[col.name]))
-
+	def dict(self):
+		data = {
+			"length" : self.length,
+			"name" : self.name,
+			"mapinfo" : self.mapList()
+		}
+		return data
 
 	def mapList(self):
 		maplist = list()

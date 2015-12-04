@@ -7,15 +7,15 @@ from sqlalchemy import Table, ForeignKey, PrimaryKeyConstraint
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
+from datetime import datetime
 import random
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Enroll(Base):
 	__tablename__ = 'Enroll'
-	__table_args__ = (PrimaryKeyConstraint('taskname','userid',name='enroll_pk'),)
-	taskname = Column('taskname', Unicode(100), ForeignKey('Task.name'), nullable = False)
+	__table_args__ = (PrimaryKeyConstraint('taskprefix','userid',name='enroll_pk'),)
+	taskprefix = Column('taskprefix', Unicode(100), ForeignKey('Task.prefix'), nullable = False)
 	userid = Column('userid', Integer, ForeignKey('User.id'), nullable = False)
 	status = Column('status',Enum(u"Waiting",u"Approved",u"Refused"), nullable = False , server_default = "Waiting")
 
@@ -72,6 +72,18 @@ class User(Base):
 	@staticmethod
 	def getUsers():
 		return session.query(User).order_by(User.id).all()
+
+	@staticmethod
+	def newUser(loginid, password, name, gender, address , role, birth,cellphone):
+		user = User(loginid, name, password)
+		user.gender = gender
+		user.address = address
+		user.role = role
+		user.birth = datetime.strptime(birth, "%a, %d %b %Y %H:%M:%S %Z").date()
+		user.cellphone = cellphone
+		session.add(user)
+		session.commit()
+
 
 	@staticmethod
 	def login(loginid, password):
