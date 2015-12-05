@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship, relation
 from sqlalchemy import Table, MetaData
 from DBP.models.instance import OriginalData, TaskData, ParsedData
 from sqlalchemy.orm import mapper
-from DBP.models.user import User
+from DBP.models.user import User,Enroll
 
 import re
 
@@ -17,6 +17,9 @@ class Task(Base):
 	name = Column(Unicode(100), nullable = False)
 	information = Column(Text)
 	duration = Column(Integer, nullable = False)
+
+
+	enroll = relationship("Enroll",lazy='dynamic', backref= "task")
 
 
 	def __init__(self,name,duration,prefix):
@@ -39,10 +42,10 @@ class Task(Base):
 		self.parsed = type(str(parsedTableName),(ParsedData,),{})
 		self.task = type(str(taskTableName),(TaskData,),{})
 		mapper(self.original, self.originaltable, properties={
-			'parsed': relationship(self.parsed, backref='original')
+			'parseds': relationship(self.parsed, backref='original')
 		})
 		mapper(self.parsed, self.parsedtable, properties={
-			'task': relationship(self.task, backref='parsed')
+			'tasks': relationship(self.task, backref='parsed')
 		})
 		mapper(self.task, self.tasktable)
 
@@ -158,6 +161,55 @@ class Task(Base):
 
 	def getOriginals(self):
 		return session.query(self.original).order_by(self.original.id).all()
+
+
+	def getOriginal(self,id):
+		return session.query(self.original).get(id)
+
+	def checkUser(self,id):
+		return self.enroll.filter(Enroll.userid == id).count() != 0
+
+	def checkUserStatus(self,id):
+		if self.checkUser(id):
+			return self.enroll.filter(Enroll.userid == id).first().status
+		else :
+			return None
+
+
+	def getParseds(self):
+		return session.query(self.parsed).order_by(self.parsed.id).all()
+
+
+	def getParsedBySubmitter(self,user):
+		return session.query(self.parsed).filter(self.parsed.submitterid == user.id).order_by(self.parsed.id).all()
+
+	def getParsedNumBySubmitter(self,user):
+		return session.query(self.parsed).filter(self.parsed.submitterid == user.id).order_by(self.parsed.id).count()
+
+
+	def addUser(self,user):
+		enroll = Enroll()
+		enroll.user = user
+		self.enroll.append(enroll)
+		session.commit()
+
+
+	def getSubmitters(self):
+		us = session.query(User,Enroll.status).join(User.enrolls).join(Enroll.task).filter(User.role == u"제출자").filter(Task.prefix == self.prefix).all()
+		submitters = list()
+
+		for user, status in us:
+			u = user.dict()
+			u["status"] = status
+			submitters.append(u)
+
+		return submitters
+
+	def changeSubmitterStatus(self,userid,status):
+		self.enroll.filter(Enroll.userid == userid).first().status = status
+		session.commit()
+
+
 
 	@staticmethod
 	def checkPrefix(prefix):

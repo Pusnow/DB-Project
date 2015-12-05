@@ -99,6 +99,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     });
 
   }
+
   $scope.showuser = function(id){
     $http.post('/admin/user', {"id" : id}) 
       .success(function(data) { 
@@ -172,12 +173,48 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
 
   }
 
+
   $scope.showtask = function(prefix){
     $http.post('/admin/task',{"prefix" : prefix}) 
       .success(function(data) { 
         $scope.task = data.task;
         initoriginalform();
 
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+  }
+  $scope.changestatus = function(id,status){
+    $http.post('/admin/changesubmitterstatus',{"prefix" : $scope.task.prefix , "id" :id , "status" : status}) 
+      .success(function(data) { 
+        if (data.code == "success"){
+         $mdToast.show(
+          $mdToast.simple()
+          .content('제출자 상태 변경 성공')
+            .hideDelay(3000)
+          );
+          initoriginalform();
+         }
+
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+  }
+
+  $scope.showsubmitters = function(prefix){
+    $http.post('/admin/submitters',{"prefix" : prefix}) 
+      .success(function(data) { 
+        $scope.sbquery = {
+          order: 'id',
+          limit: 10,
+          page: 1
+        };
+
+        $scope.submitters = data.submitters;
     }) 
     .error(function(err) { 
       console.log(err);
@@ -250,7 +287,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
   }
 
   $scope.logout = function(){
-    $http.post('/logout').success(function(){});
+    $http.post('/logout').success(function(){location.reload();});
   }
 
 

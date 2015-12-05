@@ -1,4 +1,4 @@
-var app = angular.module('DBPapp', ['ngMaterial']);
+var app = angular.module('DBPapp', ['ngMaterial','ngFileUpload','md.data.table']);
 
 app.controller('HomeController',['$scope', '$mdSidenav','$http','$mdDialog', function($scope,$mdSidenav,$http,$mdDialog) {
 

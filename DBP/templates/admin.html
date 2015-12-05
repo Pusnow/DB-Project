@@ -3,6 +3,7 @@
 
     <!-- Angular Material CSS now available via Google CDN; version 1.0.0-rc4 used here -->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.css">
+    <link rel="stylesheet" href="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css')}}">
 
   </head>
@@ -253,7 +254,7 @@
 
         </md-content>
         <div flex>
-          <md-tabs class="" md-align-tabs="" layout-fill>
+          <md-tabs class="" md-align-tabs="" layout-fill ng-if="task.prefix">
             <md-tab id="tab1">
               <md-tab-label>태스크 정보</md-tab-label>
               <md-tab-body>
@@ -290,7 +291,38 @@
                 </md-content>
               </md-tab-body>
             </md-tab>
-            <md-tab id="tab2" md-on-select ="showneworiginal()">
+            <md-tab id="tab2" md-on-select ="showsubmitters(task.prefix)">
+              <md-tab-label>제출자 관리</md-tab-label>
+              <md-tab-body>
+                <md-data-table-container flex ="50">
+                  <table md-data-table class="md-primary" md-progress="deferred">
+                    <thead md-order="sbquery.order">
+                      <tr>
+                        <th numeric order-by="id" name="User#" style="max-width : 10px"></th>
+                        <th order-by="name" name="이름"style="max-width : 50px"></th>
+                        <th order-by="loginid" name="ID"style="max-width : 50px"></th>
+                        <th norder-by="status" name="상태" style="max-width : 50px"></th>
+                        <th numeric order-by="score" name="점수" style="max-width : 10px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="submitter in submitters | orderBy: sbquery.order">
+                        <td>{{submitter.id | angular}}</td>
+                        <td>{{submitter.name | angular}}</td>
+                        <td>{{submitter.loginid | angular}}</td>
+                        <td>
+                        <md-select ng-model="submitter.status" placeholder="상태" md-on-close="changestatus(submitter.id, submitter.status)">
+                          <md-option ng-value="status" ng-repeat="status in ['Waiting', 'Approved', 'Refused' ]">{{status | angular}}</md-option>
+                        </md-select>
+                        </td>
+                        <td>{{submitter.score | angular}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-data-table-container>
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab3" md-on-select ="showneworiginal()">
               <md-tab-label>새로운 원본 데이터 타입</md-tab-label>
               <md-tab-body>
                 <h2>{{task.name|angular}} ({{task.prefix|angular}})의 새로운 원본 데이터 타입</h2>
@@ -318,7 +350,7 @@
 
               </md-tab-body>
             </md-tab>
-            <md-tab id="tab3"  md-on-select ="showoriginals()">
+            <md-tab id="tab4"  md-on-select ="showoriginals()">
               <md-tab-label>원본 데이터 타입 리스트</md-tab-label>
               <md-tab-body>
                 <h2>{{task.name|angular}} ({{task.prefix|angular}})의 원본 데이터 타입 리스트</h2>
@@ -337,14 +369,14 @@
                   </md-list>
               </md-tab-body>
             </md-tab>
-            <md-tab id="tab4">
+            <md-tab id="tab5">
               <md-tab-label>파싱 데이터 시퀀스 파일 정보</md-tab-label>
               <md-tab-body>
                 View for Item #3 <br/>
                 data.selectedIndex = 2;
               </md-tab-body>
             </md-tab>
-            <md-tab id="tab5">
+            <md-tab id="tab6">
               <md-tab-label>태스트 데이터 정보</md-tab-label>
               <md-tab-body>
                 View for Item #3 <br/>
@@ -370,6 +402,8 @@
 
     <!-- Angular Material Javascript now available via Google CDN; version 1.0.0-rc4 used here -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/fileupload/ng-file-upload.min.js')}}"></script>
+    <script src="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/home.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/admin.js')}}"></script>
   </body>

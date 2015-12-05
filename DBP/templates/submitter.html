@@ -1,0 +1,310 @@
+<html lang="ko" ng-app="DBPapp">
+ <head>
+
+    <!-- Angular Material CSS now available via Google CDN; version 1.0.0-rc4 used here -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css')}}">
+    <link rel="stylesheet" href="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.css">
+  </head>
+  <body layout="column" ng-controller="SubmitterContoller">
+  
+  <md-toolbar class="md-menu-toolbar">
+    <div layout="row">
+      <md-toolbar-filler layout layout-align="center center">
+        <md-icon md-svg-icon="call:chat"></md-icon>
+      </md-toolbar-filler>
+      <div>
+        <h2 class="md-toolbar-tools">Database Term Project: &nbsp; PostgreSQL 조 - 제출자 패널</h2>
+        <md-menu-bar>
+          <md-menu>
+            <button ng-click="$mdOpenMenu()">
+              태스크관리
+            </button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="showapply()">
+                  태스크 참여 신청
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                  <md-button ng-click="showsubmit()">태스크 데이터 제출</md-button>
+              </md-menu-item>
+              <md-menu-item>
+                  <md-button ng-click="showstatus()">제출 현황</md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+          <md-menu>
+            <button ng-click="$mdOpenMenu()">
+              계정관리
+            </button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="showedituser()">
+                  계정 정보 수정
+                  <span class="md-alt-text"></span>
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="showdeleteuser()">
+                  회원 탈퇴
+                  <span class="md-alt-text"></span>
+                </md-button>
+              </md-menu-item>
+              
+            </md-menu-content>
+          </md-menu>
+          <md-menu>
+            <button ng-click="$mdOpenMenu()">
+              기타
+            </button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="logout()">
+                  로그아웃
+                  <span class="md-alt-text"> </span>
+                </md-button>
+              </md-menu-item>
+          
+            </md-menu-content>
+          </md-menu>
+        </md-menu-bar>
+      </div>
+    </div>
+  </md-toolbar>
+  <md-content ng-if="menu=='home'" class="page-container" flex>
+    
+  </md-content>
+
+
+  <div ng-if="menu=='apply'" class="page-container" flex style="height:600px;">
+    <div  class="pagewide" >
+      <h1>태스크 참여 신청</h1>
+      <div  layout="row" >
+        <md-content flex="20" layout-fill>
+          <md-list>
+          <md-list-item class="md-3-line" ng-repeat="task in tasklist" ng-click = "showtask(task.prefix)">
+          <div class="md-list-item-text" layout="column">
+
+            <h3>{{ task.name  | angular}} ({{ task.prefix  | angular}})</h3>
+            <h4>{{ task.duration | angular}}일</h4>
+            <p>{{ task.information | angular}}</p>
+          </div>
+          </md-list-item>
+          </md-list>
+
+
+
+
+
+        </md-content>
+        <div flex layout="column">
+
+                  <h2>{{task.name|angular}} ({{task.prefix|angular}})</h2>
+                  <md-input-container>
+                    <label>주기(일)</label>
+                    <input ng-model="task.duration" disabled>
+                  </md-input-container>
+                  <md-input-container class="md-block">
+                    <label>설명</label>
+                    <textarea ng-model="task.information" columns="1" md-maxlength="150" rows="5" disabled></textarea>
+                  </md-input-container>
+
+                  <md-content>
+                   <h3>개인정보 이용동의서</h3>
+                    <p>PostgreSQL 조는 개인정보보호법, 정보통신망 이용촉진 및 정보보호 등에 관한 법률 등 관련 법령상의 개인정보보호규정을 준수하고 있습니다.</p>
+
+                  </md-content>
+                  <md-checkbox ng-model="data.cb1" aria-label="Checkbox 1">
+                    위 내용에 동의합니다.
+                  </md-checkbox>
+
+                  <md-button class="md-raised md-primary" ng-click="applytask()" ng-if="task.enrolled == false">참여신청</md-button>
+                  <md-button class="md-raised md-primary"  ng-if="task.enrolled == true" disabled>이미 참여 신청됨</md-button>
+
+        </div>
+      </div>
+
+
+    </div>
+    
+  </div>
+
+
+   <div ng-if="menu=='submit'" class="page-container" flex style="height:600px;">
+    <div  class="pagewide" >
+      <h1>태스크 데이터 제출</h1>
+      <div  layout="row" >
+        <md-content flex="20" layout-fill>
+          <md-list>
+          <md-list-item class="md-3-line" ng-repeat="task in tasklist" ng-click = "showtask(task.prefix)">
+          <div class="md-list-item-text" layout="column">
+
+            <h3>{{ task.name  | angular}} ({{ task.prefix  | angular}})</h3>
+            <h4>{{ task.duration | angular}}일</h4>
+            <p>{{ task.status | angular}}</p>
+          </div>
+          </md-list-item>
+          </md-list>
+
+
+
+
+
+        </md-content>
+        <div flex>
+          <md-tabs class="" md-align-tabs="" layout-fill ng-if="task.prefix">
+            <md-tab id="tab1">
+              <md-tab-label>태스크 정보</md-tab-label>
+              <md-tab-body>
+                <md-content layout-fill>
+                  <h2>{{task.name|angular}} ({{task.prefix|angular}})</h2>
+                  <md-input-container class="md-block">
+                    <label>설명</label>
+                    <textarea ng-model="task.information" columns="1" md-maxlength="150" rows="5"></textarea>
+                  </md-input-container>
+                  <md-list>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>주기</h3>
+                        <p>{{task.duration|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>상태</h3>
+                        <p>{{task.status|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>원본데이터타입 수</h3>
+                        <p>{{task.originalnum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>제출 데이터 수</h3>
+                        <p>{{task.parsednum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    
+                  </md-list>
+                </md-content>
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab2" md-on-select ="showneworiginal()"  ng-disabled="task.submitok == false">
+              <md-tab-label>새로운 제출</md-tab-label>
+              <md-tab-body>
+                <h2>{{task.name|angular}} ({{task.prefix|angular}})에 새로운 데이터 제출</h2>
+                <div layout="row" layout-padding>
+                <md-input-container flex="30">
+                  <label>원본데이터 타입 선택</label>
+                  <md-select ng-model="originalid" >
+                    <md-option ng-click="showoriginal(ori.id)" ng-repeat="ori in task.originals" value="{{ori.name | angular}}">
+                      {{ori.name | angular}}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+                 </div>
+                 <div layout = "column" flex>
+                 <md-list>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>튜플 길이</h3>
+                        <p>{{original.length|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>제출하는 회차</h3>
+                        <p>{{original.nth |angular}}</p>
+                      </div>
+                    </md-list-item>
+                  </md-list>
+                  </div>
+                 <md-input-container flex layout-padding>
+                  {{file.name |angular}}
+                  <md-button id="uploadButton" class="md-raised md-primary" class="button" ngf-select ng-model="file" name="file"> 파일 선택 </md-button>
+                 </md-input-container>
+                 <div layout="row" layout-sm="column" >
+                   <md-button flex="50" class="md-raised" >초기화</md-button>
+                   <md-button flex="50" class="md-raised md-primary" ng-click="submitoriginal(file)">제출</md-button>
+                 </div>
+
+              </md-tab-body>
+            </md-tab>
+            <md-tab id="tab3"  md-on-select ="showparsed()" ng-disabled="task.submitok == false">
+              <md-tab-label>제출 현황</md-tab-label> 
+              <md-tab-body flex>
+                <h2>{{task.name|angular}} ({{task.prefix|angular}})에 제출된 데이터 상태</h2>
+                <md-data-table-container>
+                  <table md-data-table class="md-primary" md-progress="deferred">
+                    <thead md-order="psquery.order">
+                      <tr>
+                        <th order-by="original" name="원본데이터타입"></th>
+                        <th numeric order-by="nth" name="회차"></th>
+                        <th order-by="status" name="상태"></th>
+                        <th numeric unit="개" order-by="tuplenum" name="튜플수"></th>
+                        <th numeric unit="개" order-by="duplicatetuplenum" name="중복튜플수"></th>
+                        <th order-by="duration_start" name="시작"></th>
+                        <th order-by="duration_end" name="끝"></th>
+                        <th numeric unit="점" order-by="score" name="점수"></th>
+                        <th order-by="pnp" name="P/NP"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="parsed in parsedlist | orderBy: psquery.order">
+                        <td>{{parsed.original | angular}}</td>
+                        <td>{{parsed.nth | angular}}</td>
+                        <td>{{parsed.status | angular}}</td>
+                        <td>{{parsed.tuplenum | angular}}</td>
+                        <td>{{parsed.duplicatetuplenum | angular}}</td>
+                        <td>{{parsed.duration_start | angular}}</td>
+                        <td>{{parsed.duration_end | angular}}</td>
+                        <td>{{parsed.score | angular}}</td>
+                        <td>{{parsed.pnp | angular}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-data-table-container>
+              </md-tab-body>
+            </md-tab>
+          </md-tabs>
+        </div>
+      </div>
+
+
+    </div>
+    
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+    <!-- Angular Material Dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js"></script>
+
+
+    <!-- Angular Material Javascript now available via Google CDN; version 1.0.0-rc4 used here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/fileupload/ng-file-upload.min.js')}}"></script>
+    <script src="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/submitter.js')}}"></script>
+  </body>
+
+</html>

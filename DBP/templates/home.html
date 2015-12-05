@@ -3,6 +3,7 @@
 
     <!-- Angular Material CSS now available via Google CDN; version 1.0.0-rc4 used here -->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.css">
+    <link rel="stylesheet" href="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.css">
 
   </head>
   <body layout="column" ng-controller="HomeController">
@@ -57,6 +58,8 @@
 
     <!-- Angular Material Javascript now available via Google CDN; version 1.0.0-rc4 used here -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/fileupload/ng-file-upload.min.js')}}"></script>
+    <script src="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/home.js')}}"></script>
   </body>
 

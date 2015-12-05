@@ -12,13 +12,22 @@ import random
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+enrollcode = {
+	"Waiting" : u"승인 대기중",
+	"Approved" : u"승인 완료",
+	"Refused" : u"승인 거절",
+}
+
+
+
 class Enroll(Base):
 	__tablename__ = 'Enroll'
 	__table_args__ = (PrimaryKeyConstraint('taskprefix','userid',name='enroll_pk'),)
 	taskprefix = Column('taskprefix', Unicode(100), ForeignKey('Task.prefix'), nullable = False)
 	userid = Column('userid', Integer, ForeignKey('User.id'), nullable = False)
 	status = Column('status',Enum(u"Waiting",u"Approved",u"Refused"), nullable = False , server_default = "Waiting")
-
+	user = relationship("User", backref="enrolls")
 	
 
 
@@ -34,6 +43,8 @@ class User(Base):
 	score = Column(Integer, server_default = "0", nullable = False)
 	birth = Column(Date)
 	cellphone = Column(Unicode(15))
+
+
 
 	def __init__(self,loginid,name,password):
 		self.loginid = loginid
@@ -57,7 +68,20 @@ class User(Base):
 		}
 		if data["birth"] :
 			data["birth"] = data["birth"].isoformat()
+
 		return data
+
+
+	def enrollStatus(self):
+		enrolls = list()
+
+		for enroll in self.enrolls:
+			task = enroll.task.dict()
+			task["status"] = enrollcode[enroll.status]
+			enrolls.append(task)
+
+		return enrolls
+
 
 
 	@staticmethod

@@ -14,6 +14,9 @@ def index():
 		if user.role == u"관리자":
 			return render_template('admin.html')
 
+		elif user.role == u"제출자":
+			return render_template('submitter.html')
+
 	return render_template('home.html')
 
 
@@ -56,96 +59,5 @@ def logout():
 
 
 
-@app.route('/admin/tasks', methods=["GET"])
-@app.route('/admin/tasks/<int:start>/<int:end>', methods=["GET"])
-def tasks(start = 0, end = 10):
-	tasklist = Task.getTasks(start,end)
-	return jsonify({"tasks" : map(lambda x : x.dict(),tasklist)})
-	
-
-
-@app.route('/admin/newuser', methods=["POST"])
-def newuser():
-	data = request.get_json()
-	user = User.newUser(data["loginid"], data["password"], data["name"],data["gender"],data["address"],data["role"],data["birth"],data["cellphone"])
-	return jsonify({"code" : "success"})
-
-
-
-@app.route('/admin/users', methods=["GET"])
-def users():
-	userlist = User.getUsers()
-	return jsonify({"users" : map(lambda x : x.dict(),userlist)})
-
-
-
-@app.route('/admin/user', methods=["POST"])
-def user():
-	data = request.get_json()
-	user = User.getUser(data["id"])
-	return jsonify({"user" : user.dict()})
-
-
-@app.route('/admin/newtask', methods=["POST"])
-def newtask():
-
-	data = request.get_json()
-	msg = Task.checkData(data)
-
-	print msg
-	if not msg == "":
-		return jsonify({"code" : "err", "msg" : msg})
-
-	else :
-		task = Task.newTask(data)
-
-
-		return jsonify({"code" : "success", "task" : task.dict()})
-
-@app.route('/admin/task', methods=["POST"])
-def task():
-	data = request.get_json()
-	task = Task.getTask(data["prefix"])
-	if task :
-		return jsonify({"task" : task.getInfo()})
-	else :
-		return jsonify({"code" : "err", "msg" : "No task"})
-
-
-
-
-@app.route('/admin/neworiginal', methods=["POST"])
-def neworiginal():
-
-	data = request.get_json()
-	task = Task.getTask(data["prefix"]) 
-
-	if task :
-		msg = Task.checkOriginal(data)
-		if msg != "" :
-			return jsonify({"code" : "err", "msg" : msg})
-		else :
-			original = task.newOriginal(data["length"],data["name"],data["schemas"])
-			return jsonify({"code" : "success", "task" : original.dict()})
-
-	else :
-		return jsonify({"code" : "err", "msg" : "No task"})
-
-	return ""
-
-
-@app.route('/admin/showoriginals', methods=["POST"])
-def showoriginals():
-
-	data = request.get_json()
-	task = Task.getTask(data["prefix"]) 
-
-	if task :
-		originallist = map(lambda x : x.dict(), task.getOriginals())
-		return jsonify({"code" : "success", "originallist" : originallist})
-
-	else :
-		return jsonify({"code" : "err", "msg" : "No task"})
-
-	return ""
-	
+from DBP import admin
+from DBP import submitter

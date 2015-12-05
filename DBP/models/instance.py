@@ -5,6 +5,7 @@ from DBP.models import Base, session
 from DBP.models.user import User
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.inspection import inspect
+from sqlalchemy.sql import func
 import csv
 import io
 
@@ -27,6 +28,7 @@ class OriginalData (object):
 
 	def dict(self):
 		data = {
+			"id" : self.id,
 			"length" : self.length,
 			"name" : self.name,
 			"mapinfo" : self.mapList()
@@ -52,7 +54,7 @@ class OriginalData (object):
 			crow = list()
 			dupset.add(unicode(rrow))
 			for mapnum in maplist:
-				crow.append(unicode(rrow[mapnum]))
+				crow.append(rrow[mapnum])
 
 			writer.writerow(crow)
 			counter += 1
@@ -63,11 +65,30 @@ class OriginalData (object):
 		parsedmodel =  self.parsedclass(nth,duration_start,duration_end,csvwrite,counter, counter - len(dupset))
 		parsedmodel.submitterid = submitter.id
 		parsedmodel.evaluatorid = evaluator.id
-		self.parsed.append(parsedmodel)
+		self.parseds.append(parsedmodel)
 
 		session.commit()
 
 		return parsedmodel
+
+	def getInfoByUser(self,user):
+		data = self.dict()
+		nth =  session.query( func.max(self.parsedclass.nth)).filter(self.parsedclass.submitterid == user.id).first()
+		
+		data["nth"] = self.getNextnth (user)
+
+
+		return data
+
+
+	def getNextnth(self,user):
+		nth =  session.query( func.max(self.parsedclass.nth)).filter(self.parsedclass.submitterid == user.id).first()
+		if nth[0]:
+			return nth[0] +1
+		else :
+			return 1
+
+	
 
 
 
@@ -104,6 +125,22 @@ class ParsedData (object):
 		session.commit()
 		return True
 
+
+	def dict(self):
+
+		return {
+			"nth" : self.nth,
+			"tuplenum" : self.tuplenum,
+			"duplicatetuplenum" : self.duplicatetuplenum,
+			"duration_start" : self.duration_start.isoformat(),
+			"duration_end" : self.duration_end.isoformat(),
+			"status" : self.status,
+			"score" : self.score,
+			"pnp" : self.pnp,
+			"submitter" : User.getUser(self.submitterid).name,
+			"original" : self.original.name
+
+		}
 
 
 
