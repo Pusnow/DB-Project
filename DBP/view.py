@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 
-from flask import Flask, request, url_for, abort, render_template, jsonify, session
+from flask import Flask, request, url_for, abort, render_template, jsonify, session,redirect
 from DBP import app
 from DBP.models.user import User
 from DBP.models.task import Task
@@ -45,7 +45,14 @@ def login():
 		abort(401)
 		#return jsonify(dict(msg=u"정보가 일치하지 않습니다."))
 
+@app.route('/logout', methods=["POST"])
+def logout():
 
+	session['logged_in'] = False
+
+	session['userid'] = None
+
+	return redirect(url_for('index'))
 
 
 
@@ -60,7 +67,6 @@ def tasks(start = 0, end = 10):
 @app.route('/admin/newuser', methods=["POST"])
 def newuser():
 	data = request.get_json()
-	print data
 	user = User.newUser(data["loginid"], data["password"], data["name"],data["gender"],data["address"],data["role"],data["birth"],data["cellphone"])
 	return jsonify({"code" : "success"})
 
@@ -70,6 +76,14 @@ def newuser():
 def users():
 	userlist = User.getUsers()
 	return jsonify({"users" : map(lambda x : x.dict(),userlist)})
+
+
+
+@app.route('/admin/user', methods=["POST"])
+def user():
+	data = request.get_json()
+	user = User.getUser(data["id"])
+	return jsonify({"user" : user.dict()})
 
 
 @app.route('/admin/newtask', methods=["POST"])

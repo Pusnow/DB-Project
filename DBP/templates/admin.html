@@ -36,73 +36,19 @@
               회원관리
             </button>
             <md-menu-content>
-              <md-menu-item class="md-indent">
+              <md-menu-item>
                 <md-button ng-click="shownewuser()">
                   새로운 회원
                   <span class="md-alt-text"></span>
                 </md-button>
               </md-menu-item>
-              <md-menu-item class="md-indent">
-                <md-icon md-svg-icon="redo"></md-icon>
-                <md-button ng-click="ctrl.sampleAction('redo', $event)">
+              <md-menu-item>
+                <md-button ng-click="showusers()">
                   회원 보기
                   <span class="md-alt-text"></span>
                 </md-button>
               </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item class="md-indent">
-                <md-icon md-svg-icon="content-cut"></md-icon>
-                <md-button ng-click="ctrl.sampleAction('cut', $event)">
-                  Cut
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-item class="md-indent">
-                <md-icon md-svg-icon="content-copy"></md-icon>
-                <md-button ng-click="ctrl.sampleAction('copy', $event)">
-                  Copy
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-item class="md-indent">
-                <md-icon md-svg-icon="content-paste"></md-icon>
-                <md-button ng-click="ctrl.sampleAction('paste', $event)">
-                  Paste
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item class="md-indent">
-                <md-button ng-click="ctrl.sampleAction('Find and replace', $event)">
-                  Find and replace...
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-            </md-menu-content>
-          </md-menu>
-          <md-menu>
-            <button ng-click="$mdOpenMenu()">
-              통계
-            </button>
-            <md-menu-content>
-              <md-menu-item type="checkbox" ng-model="ctrl.settings.printLayout">Print layout</md-menu-item>
-              <md-menu-item class="md-indent">
-                <md-menu>
-                  <md-button ng-click="$mdOpenMenu()">Mode</md-button>
-                  <md-menu-content width="3">
-                    <md-menu-item type="radio" ng-model="ctrl.settings.presentationMode" value="'presentation'">Presentation</md-menu-item>
-                    <md-menu-item type="radio" ng-model="ctrl.settings.presentationMode" value="'edit'">Edit</md-menu-item>
-                    <md-menu-item type="radio" ng-model="ctrl.settings.presentationMode" value="'modifiable'">Modifiable</md-menu-item>
-                  </md-menu-content>
-                </md-menu>
-              </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item type="checkbox" ng-model="ctrl.settings.showRuler">Show ruler</md-menu-item>
-              <md-menu-item type="checkbox" ng-model="ctrl.settings.showEquationToolbar">Show equation toolbar</md-menu-item>
-              <md-menu-item type="checkbox" ng-model="ctrl.settings.showSpellingSuggestions">Show spelling suggestions</md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item type="checkbox" ng-model="ctrl.settings.compactControls">Compact controls</md-menu-item>
-              <md-menu-item type="checkbox" ng-model="ctrl.settings.fullScreen">Full screen</md-menu-item>
+              
             </md-menu-content>
           </md-menu>
           <md-menu>
@@ -111,43 +57,12 @@
             </button>
             <md-menu-content>
               <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('bold', $event)">
+                <md-button ng-click="logout()">
                   로그아웃
                   <span class="md-alt-text"> </span>
                 </md-button>
               </md-menu-item>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('italic', $event)">
-                  Italic
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('underline', $event)">
-                  Underline
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('strikethrough', $event)">
-                  Strikethrough
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('superscript', $event)">
-                  Superscript
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-item>
-                <md-button ng-click="ctrl.sampleAction('subscript', $event)">
-                  Subscript
-                  <span class="md-alt-text"></span>
-                </md-button>
-              </md-menu-item>
-              <md-menu-divider></md-menu-divider>
-              <md-menu-item><md-button ng-click="ctrl.toggleSetting('clearFormatting')">Clear Formatting</md-button></md-menu-item>
+          
             </md-menu-content>
           </md-menu>
         </md-menu-bar>
@@ -236,7 +151,7 @@
 
       <md-input-container class="md-block">
         <label>주소</label>
-        <textarea ng-model="task.information" columns="1" md-maxlength="255" rows="5"></textarea>
+        <textarea ng-model="user.address" columns="1" md-maxlength="255" rows="5"></textarea>
       </md-input-container>
     
       <div layout="row" layout-sm="column" >
@@ -246,6 +161,78 @@
     </div>
     
   </md-content>
+    <div ng-if="menu=='users'" class="page-container" flex style="height:600px;">
+    <div  class="pagewide" >
+      <h1>사용자 목록</h1>
+      
+        <div layout="row" >
+          <md-content flex="30" layout-fill>
+            <md-list>
+              <md-list-item class="md-3-line" ng-repeat="user in userlist" ng-click = "showuser(user.id)">
+                <div class="md-list-item-text" layout="column">
+
+                  <h3>{{ user.name  | angular}} ({{ user.loginid  | angular}})</h3>
+                  <p>{{ user.role | angular}}</p>
+               </div>
+              </md-list-item>
+            </md-list>
+          </md-content>
+          <md-content  flex >
+            <div layout="row" layout-sm="column">
+              <md-input-container flex>
+                <label>사용자 아이디</label>
+                <input ng-model="user.loginid">
+              </md-input-container>
+              <md-input-container flex>
+                <label>사용자 비밀번호</label>
+                <input ng-model="user.password">
+              </md-input-container>
+              
+            </div>
+            <div layout="row" layout-sm="column">
+              <md-input-container flex>
+                <label>사용자 이름</label>
+                <input ng-model="user.name">
+              </md-input-container>
+              <md-input-container flex>
+                <label>성별</label>
+                <md-select ng-model="user.gender">
+                  <md-option ng-repeat="gender in ['남자','여자']" value="{{gender | angular}}">
+                    {{gender | angular}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+             </div>
+             <div layout="row" layout-sm="column" >
+              <md-input-container flex>
+                <label>전화번호</label>
+                <input ng-model="user.cellphone">
+              </md-input-container>
+              <md-input-container flex>
+                <label>역할</label>
+                <md-select ng-model="user.role">
+                  <md-option ng-repeat="role in ['제출자','평가자']" value="{{role | angular}}">
+                    {{role | angular}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+              
+            </div>
+            <md-datepicker ng-model="user.birth" md-placeholder="생년월일"></md-datepicker>
+            <md-input-container class="md-block">
+              <label>주소</label>
+              <textarea ng-model="user.address" columns="1" md-maxlength="255" rows="5"></textarea>
+            </md-input-container>
+          
+            <div layout="row" layout-sm="row" >
+              <md-button flex class="md-raised md-primary" ng-click="edituser()">수정</md-button>
+            </div>
+          </div>
+          </md-content>
+        </div>
+    </div>
+    
+  </div>
   <div ng-if="menu=='task'" class="page-container" flex style="height:600px;">
     <div  class="pagewide" >
       <h1>태스크 목록</h1>

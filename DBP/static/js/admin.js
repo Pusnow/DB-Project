@@ -32,15 +32,17 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     "gender" : "",
     "address" : "",
     "role" : "",
-    "birth" : Date(),
+    "birth" : new Date(),
     "cellphone" : ""
     }
 
   }
+
+
   $scope.newuser = function(){
 
     var data = $scope.user;
-    data.birth = data.birth.toUTCString();
+    data.birth = $scope.user.birth.toUTCString();
     $http.post('/admin/newuser', $scope.user) 
       .success(function(data) { 
       if (data.code == "success"){
@@ -51,7 +53,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
           "gender" : "",
           "address" : "",
           "role" : "",
-          "birth" : Date(),
+          "birth" : new Date(),
           "cellphone" : ""
           }
         $mdToast.show(
@@ -85,21 +87,28 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     })
   }
 
-  $scope.showusers = function(){
-    $scope.menu = 'users';
-    $scope.user = {
-    "loginid" : "",
-    "password" : "",
-    "name" : "",
-    "gender" : "",
-    "address" : "",
-    "role" : "",
-    "birth" : Date(),
-    "cellphone" : ""
-    }
+
+    $scope.showusers = function(){
+    $http.get('/admin/users') 
+      .success(function(data) { 
+        $scope.menu = 'users';
+        $scope.userlist = data.users
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
 
   }
+  $scope.showuser = function(id){
+    $http.post('/admin/user', {"id" : id}) 
+      .success(function(data) { 
+        $scope.user = data.user
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
 
+  }
   $scope.submitTaskForm = function(){
     $http.post('/admin/newtask', $scope.task) 
       .success(function(data) { 
@@ -240,18 +249,12 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     initoriginals();
   }
 
-
-  $scope.showusers = function(){
-    $http.get('/admin/users') 
-      .success(function(data) { 
-        $scope.menu = 'user';
-        console.log(data);
-    }) 
-    .error(function(err) { 
-      console.log(err);
-    });
-
+  $scope.logout = function(){
+    $http.post('/logout').success(function(){});
   }
+
+
+
   
 
 

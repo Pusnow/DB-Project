@@ -45,7 +45,7 @@ class User(Base):
 
 
 	def dict(self):
-		return {"id" : self.id, 
+		data = {"id" : self.id, 
 		"loginid" : self.loginid, 
 		"name" : self.name, 
 		"gender" : self.gender, 
@@ -55,6 +55,9 @@ class User(Base):
 		"birth" : self.birth,
 		"cellphone" : self.cellphone
 		}
+		if data["birth"] :
+			data["birth"] = data["birth"].isoformat()
+		return data
 
 
 	@staticmethod
