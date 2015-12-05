@@ -16,6 +16,8 @@ def index():
 
 		elif user.role == u"제출자":
 			return render_template('submitter.html')
+		elif user.role == u"평가자":
+			return render_template('evaluator.html')
 
 	return render_template('home.html')
 
@@ -61,3 +63,4 @@ def logout():
 
 from DBP import admin
 from DBP import submitter
+from DBP import evaluator

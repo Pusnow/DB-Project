@@ -270,7 +270,11 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     $http.post('/admin/showoriginals', $scope.task) 
       .success(function(data) { 
         if (data.code == "success"){
-          console.log(data);
+          $scope.orquery = {
+          order: 'id',
+          limit: 10,
+          page: 1
+        };
           $scope.originallist = data.originallist;
           
          }
@@ -282,9 +286,31 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
         console.log(err);
       });
   }
-  $scope.showoriginals = function(){
+  $scope.showparseds = function(){
+    $http.post('/admin/showparseds', $scope.task) 
+      .success(function(data) { 
+        if (data.code == "success"){
+          $scope.psquery = {
+          order: 'id',
+          limit: 10,
+          page: 1
+        };
+          $scope.parsedlist = data.parsedlist;
+          
+         }
+          else if (data.code == "err"){
+           
+          }
+      }) 
+      .error(function(err) { 
+        console.log(err);
+      });
+  }
+
+   $scope.showoriginals = function(){
     initoriginals();
   }
+
 
   $scope.logout = function(){
     $http.post('/logout').success(function(){location.reload();});

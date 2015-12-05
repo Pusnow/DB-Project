@@ -109,8 +109,24 @@ def showoriginals():
 	task = Task.getTask(data["prefix"]) 
 
 	if task :
-		originallist = map(lambda x : x.dict(), task.getOriginals())
+		originallist = map(lambda x : x.getInfo(), task.getOriginals())
 		return jsonify({"code" : "success", "originallist" : originallist})
+
+	else :
+		return jsonify({"code" : "err", "msg" : "No task"})
+
+	return ""
+
+
+
+@app.route('/admin/showparseds', methods=["POST"])
+def showparseds():
+
+	data = request.get_json()
+	task = Task.getTask(data["prefix"]) 
+
+	if task :
+		return jsonify({"code" : "success", "parsedlist" : map(lambda x : x.dict(), task.getParseds())})
 
 	else :
 		return jsonify({"code" : "err", "msg" : "No task"})

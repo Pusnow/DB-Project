@@ -333,14 +333,14 @@
                 </md-input-container>
                  <md-input-container flex>
                    <label>튜플의 길이</label>
-                   <input ng-model="original.length">
+                   <input type="number"  ng-model="original.length">
                  </md-input-container>
                  </div>
                  <h4>매핑 정보 (다음에 해당하는 위치 정보를 입력)</h4>
                  <div layout="row">
                    <md-input-container flex ng-repeat="col in original.schemas">
                     <label>{{col.label | angular}}</label>
-                    <input ng-model="col.col">
+                    <input type="number"  ng-model="col.col">
                   </md-input-container>
                  </div>
                  <div layout="row" layout-sm="column" >
@@ -354,30 +354,73 @@
               <md-tab-label>원본 데이터 타입 리스트</md-tab-label>
               <md-tab-body>
                 <h2>{{task.name|angular}} ({{task.prefix|angular}})의 원본 데이터 타입 리스트</h2>
-                <md-list>
-                  <md-list-item class="md-2-line" ng-repeat="ori in originallist" ng-click = "">
-                    <div class="md-list-item-text" layout="column">
-                      <h3>{{ ori.name  | angular}}</h3>
-                      <div layout="row" >
-                        <div ng-repeat="map in ori.mapinfo">
-                          {{ map |angular }}
-                        </div>
-
-                      </div>
-                    </div>
-                    </md-list-item>
-                  </md-list>
+   
+                   <md-data-table-container flex>
+                  <table md-data-table class="md-primary" md-progress="deferred">
+                    <thead md-order="orquery.order">
+                      <tr>
+                        <th order-by="name" name="이름"style="max-width : 50px"></th>
+                        <th numeric order-by="length" name="길이" style="max-width : 10px"></th>
+                        <th numeric order-by="parsednum" name="파싱데이터시퀀스파일 수" style="max-width : 15px"></th>
+                        <th numeric order-by="tasknum" name="태스크 튜플 수" style="max-width : 10px"></th>
+                        <th ng-repeat="sch in task.schemas" numeric name="{{ sch |angular}}"style="max-width : 10px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="ori in originallist | orderBy: orquery.order">
+                        <td>{{ori.name | angular}}</td>
+                        <td>{{ori.length | angular}}</td>
+                        <td>{{ori.parsednum | angular}}</td>
+                        <td>{{ori.tasknum | angular}}</td>
+                        <td ng-repeat="map in ori.mapinfo">{{map | angular}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-data-table-container>
               </md-tab-body>
             </md-tab>
-            <md-tab id="tab5">
+            <md-tab id="tab5" md-on-select ="showparseds()">
               <md-tab-label>파싱 데이터 시퀀스 파일 정보</md-tab-label>
               <md-tab-body>
-                View for Item #3 <br/>
-                data.selectedIndex = 2;
+               <md-data-table-container flex>
+                  <table md-data-table class="md-primary" md-progress="deferred">
+                    <thead md-order="psquery.order">
+                      <tr>
+                        <th order-by="original" name="원본데이터타입"style="max-width : 40px"></th>
+                        <th  order-by="submitter" name="제출자" style="max-width : 30px"></th>
+                        <th  order-by="evaluator" name="평가자" style="max-width : 30px"></th>
+                        <th numeric order-by="nth" name="회차 수" style="max-width : 10px"></th>
+                        <th  order-by="status" name="상태" style="max-width : 20px"></th>
+                        <th numeric order-by="tuplenum" name="튜플 수" style="max-width : 10px"></th>
+                        <th numeric order-by="duplicatetuplenum" name="중복 수" style="max-width : 20px"></th>
+                        <th numeric order-by="score" name="점수" style="max-width : 10px"></th>
+                        <th  order-by="duration_start" name="시작" style="max-width : 15px"></th>
+                        <th  order-by="duration_end" name="끝" style="max-width : 15px"></th>
+                        <th  order-by="pnp" name="P/NP" style="max-width : 20px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="psd in parsedlist | orderBy: psquery.order">
+                        <td>{{psd.original | angular}}</td>
+                        <td>{{psd.submitter | angular}}</td>
+                        <td>{{psd.evaluator | angular}}</td>
+                        <td>{{psd.nth | angular}}</td>
+                        <td>{{psd.status | angular}}</td>
+                        <td>{{psd.tuplenum | angular}}</td>
+                        <td>{{psd.duplicatetuplenum | angular}}</td>
+                        <td>{{psd.score | angular}}</td>
+                        <td>{{psd.duration_start | angular}}</td>
+                        <td>{{psd.duration_end | angular}}</td>
+                        <td>{{psd.pnp | angular}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-data-table-container>
+                
               </md-tab-body>
             </md-tab>
             <md-tab id="tab6">
-              <md-tab-label>태스트 데이터 정보</md-tab-label>
+              <md-tab-label>태스크 데이터 정보</md-tab-label>
               <md-tab-body>
                 View for Item #3 <br/>
                 data.selectedIndex = 2;

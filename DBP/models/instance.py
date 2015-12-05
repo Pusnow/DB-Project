@@ -9,6 +9,9 @@ from sqlalchemy.sql import func
 import csv
 import io
 
+def utf_8_encoder(unicode_csv_data):
+	for line in unicode_csv_data:
+		yield line.encode('utf-8')
 
 class OriginalData (object):
 
@@ -33,6 +36,13 @@ class OriginalData (object):
 			"name" : self.name,
 			"mapinfo" : self.mapList()
 		}
+		return data
+
+	def getInfo(self):
+		data = self.dict()
+		data["parsednum"] = len(self.parseds)
+		data["tasknum"] = sum(map(lambda x: len(x.tasks),self.parseds))
+		
 		return data
 
 	def mapList(self):
@@ -104,8 +114,10 @@ class ParsedData (object):
 
 
 	def parsecsv(self):
-		csvread = io.StringIO(unicode(self.file))
-		reader = csv.reader(csvread, delimiter=',', quotechar="'")
+		print type(self.file.decode("utf8"))
+		print type(self.file)
+		csvread = io.StringIO(self.file.decode("utf8"))
+		reader = csv.reader(utf_8_encoder(csvread), delimiter=',', quotechar="'")
 		parsedlist = list()
 		for row in reader:
 			tsmodel = self.taskclass(User.getUser(self.submitterid).name, self.id)
@@ -129,6 +141,7 @@ class ParsedData (object):
 	def dict(self):
 
 		return {
+			"id" : self.id,
 			"nth" : self.nth,
 			"tuplenum" : self.tuplenum,
 			"duplicatetuplenum" : self.duplicatetuplenum,
@@ -138,16 +151,17 @@ class ParsedData (object):
 			"score" : self.score,
 			"pnp" : self.pnp,
 			"submitter" : User.getUser(self.submitterid).name,
-			"original" : self.original.name
+			"original" : self.original.name,
+			"evaluator": User.getUser(self.evaluatorid).name
 
 		}
 
 
-
-
-
-
-
+	def evaluate(self, score,pnp):
+		self.status = "Evaluated"
+		self.score = score
+		self.pnp = pnp
+		session.commit()
 
 class TaskData (object):
 	

@@ -1,0 +1,193 @@
+<html lang="ko" ng-app="DBPapp">
+ <head>
+
+    <!-- Angular Material CSS now available via Google CDN; version 1.0.0-rc4 used here -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css')}}">
+    <link rel="stylesheet" href="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.css">
+  </head>
+  <body layout="column" ng-controller="EvaluatorContoller">
+  
+  <md-toolbar class="md-menu-toolbar">
+    <div layout="row">
+      <md-toolbar-filler layout layout-align="center center">
+        <md-icon md-svg-icon="call:chat"></md-icon>
+      </md-toolbar-filler>
+      <div>
+        <h2 class="md-toolbar-tools">Database Term Project: &nbsp; PostgreSQL 조 - 제출자 패널</h2>
+        <md-menu-bar>
+          <md-menu>
+            <button ng-click="$mdOpenMenu()">
+              평가
+            </button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="showevaluate()">
+                  평가
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                  <md-button ng-click="showsubmit()">평가 기록</md-button>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+          <md-menu>
+            <button ng-click="$mdOpenMenu()">
+              계정관리
+            </button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="showedituser()">
+                  계정 정보 수정
+                  <span class="md-alt-text"></span>
+                </md-button>
+              </md-menu-item>
+              <md-menu-item>
+                <md-button ng-click="showdeleteuser()">
+                  회원 탈퇴
+                  <span class="md-alt-text"></span>
+                </md-button>
+              </md-menu-item>
+              
+            </md-menu-content>
+          </md-menu>
+          <md-menu>
+            <button ng-click="$mdOpenMenu()">
+              기타
+            </button>
+            <md-menu-content>
+              <md-menu-item>
+                <md-button ng-click="logout()">
+                  로그아웃
+                  <span class="md-alt-text"> </span>
+                </md-button>
+              </md-menu-item>
+          
+            </md-menu-content>
+          </md-menu>
+        </md-menu-bar>
+      </div>
+    </div>
+  </md-toolbar>
+  <md-content ng-if="menu=='home'" class="page-container" flex>
+    
+  </md-content>
+
+
+  <div ng-if="menu=='evaluate'" class="page-container" flex style="height:600px;">
+    <div  class="pagewide" >
+      <h1>파싱 데이터 평가</h1>
+      <div  layout="row" >
+        <md-content flex="20" layout-fill>
+          <md-list>
+          <md-list-item class="md-3-line" ng-repeat="ps in parsedlist" ng-click = "showparsed(ps.taskprefix,ps.id)">
+          <div class="md-list-item-text" layout="column">
+
+            <h3>{{ ps.taskname  | angular}} ({{ ps.taskprefix  | angular}})</h3>
+            <h4>{{ ps.original | angular}}</h4>
+            <p>{{ ps.submitter | angular}}</p>
+          </div>
+          </md-list-item>
+          </md-list>
+
+        </md-content>
+
+
+        <div flex layout="column" ng-if="parsed.id">
+
+                  <h2>{{task.name|angular}} ({{task.prefix|angular}})에 제출한 {{parsed.name | angular}} 파일</h2>
+                  <md-list>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>제출자</h3>
+                        <p>{{parsed.submitter|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>회차</h3>
+                        <p>{{parsed.nth|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>튜플 수</h3>
+                        <p>{{parsed.tuplenum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>중복 튜플 수</h3>
+                        <p>{{parsed.duplicatetuplenum|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    
+                  </md-list>
+                  <md-list>
+                    <md-list-item class="md-2-line numinfohalf" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>기간</h3>
+                        <p>{{parsed.duration_start|angular}} ~ {{parsed.duration_end|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfohalf" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>CSV 파일</h3>
+                        <p><a href = "/evaluator/getfile/{{ task.prefix | angular}}/{{ parsed.id | angular}}">다운로드</a></p>
+                      </div>
+                    </md-list-item>
+      
+                    
+                  </md-list>
+
+
+                   <h3>평가 항목</h3>
+                     <div layout ="row">
+                      <div flex="10" layout layout-align="center center">
+                        <span class="md-body-1">점수( {{eval.score |angular}} 점)</span>
+                      </div>
+                     <md-slider flex="35" min="0" max="10" ng-model="eval.score" aria-label="score" class>
+                     </md-slider>
+                     <md-checkbox ng-model="eval.pass" aria-label="pass" flex-offset="5">
+                      Pass
+                    </md-checkbox>
+                   </div>
+                   <div layout ="row" layout-padding layout-align="center">
+                      <md-button flex="20" class="md-raised md-primary" ng-click="submitevaluate()">제출</md-button>
+                    </div>
+
+        </div>
+      </div>
+
+
+    </div>
+    
+  </div>
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+    <!-- Angular Material Dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js"></script>
+
+
+    <!-- Angular Material Javascript now available via Google CDN; version 1.0.0-rc4 used here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc4/angular-material.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/fileupload/ng-file-upload.min.js')}}"></script>
+    <script src="http://rawgit.com/daniel-nagy/md-data-table/master/dist/md-data-table.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/home.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/evaluator.js')}}"></script>
+  </body>
+
+</html>

@@ -163,6 +163,18 @@ class Task(Base):
 		return session.query(self.original).order_by(self.original.id).all()
 
 
+
+	"""
+	def getParseds(self):
+		poname =  session.query(self.parsed,self.original.name).join(self.parsed.original).order_by(self.parsed.id).all()
+		parsedlit = list()
+		for (parsed, originalname) in poname:
+			p = parsed.dict()
+			parsedlist.append(p)
+
+		return parsedlist
+	"""
+
 	def getOriginal(self,id):
 		return session.query(self.original).get(id)
 
@@ -178,6 +190,10 @@ class Task(Base):
 
 	def getParseds(self):
 		return session.query(self.parsed).order_by(self.parsed.id).all()
+
+
+	def getParsed(self,id):
+		return session.query(self.parsed).get(id)
 
 
 	def getParsedBySubmitter(self,user):
@@ -296,6 +312,23 @@ class Task(Base):
 		if task :
 			task.setTables()
 		return task
+
+
+	@staticmethod
+	def getEvaluateReady(userid):
+		tasks = session.query(Task).all()
+		evlist = []
+
+		for task in tasks:
+			task.setTables()
+			pslist = session.query(task.parsed).filter(task.parsed.evaluatorid == userid).filter(task.parsed.status == u"Waiting").all()
+			for parsed in pslist:
+				p = parsed.dict()
+				p["taskprefix"] = task.prefix
+				p["taskname"] = task.name
+				evlist.append(p)
+
+		return evlist
 
 
 
