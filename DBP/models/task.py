@@ -282,7 +282,7 @@ class Task(Base):
 
 
 		for col in data["schemas"] :
-			if not re.match("^[A-Za-z0-9_-]+$", col):
+			if not re.match("^[A-Za-z0-9_-]+$", col.name):
 				return u"스키마는 영어,숫자, _ 문자열이야 합니다."
 
 

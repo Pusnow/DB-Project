@@ -44,7 +44,7 @@ def newtask():
 	data = request.get_json()
 	msg = Task.checkData(data)
 
-	print msg
+	
 	if not msg == "":
 		return jsonify({"code" : "err", "msg" : msg})
 

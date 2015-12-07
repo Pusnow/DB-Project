@@ -100,7 +100,23 @@
         placeholder="+ 스키마 입력"
         delete-button-label="스키마 삭제"
         delete-hint="스키마 삭제"
-        secondary-placeholder="스키마 추가"></md-chips>
+        secondary-placeholder="스키마 추가"  md-transform-chip="newSch($chip)">
+      <md-chip-template>
+        <span>
+        {%raw%}
+          <strong>{{$chip.name}}</strong>
+          <em>({{$chip.type}})</em>
+        {%endraw%}
+        </span>
+      </md-chip-template>
+
+
+
+
+
+
+
+        </md-chips>
     
       <div layout="row" layout-sm="column" >
         <md-button flex="50" class="md-raised" ng-click="resetTaskForm()">초기화</md-button>

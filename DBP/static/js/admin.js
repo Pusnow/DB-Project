@@ -120,6 +120,22 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     });
 
   }
+  $scope.newSch = function(chip) {
+
+    var info = chip.split(":")
+    var name = info[0];
+    var type = "str"
+    if (info.length > 1){
+      if (info[1] == "int"){
+        type = "int";
+      }
+    }
+
+      return {
+        name: name,
+        type: type
+      };
+    };
   $scope.submitTaskForm = function(){
     $http.post('/admin/newtask', $scope.task) 
       .success(function(data) { 
