@@ -1,14 +1,34 @@
 #-*- coding: utf-8 -*-
 
 from DBP.models import Base, engine, session
-from sqlalchemy import Column,  Unicode, Text, DateTime, Integer, BLOB, ForeignKey, Enum
+from sqlalchemy import Column,  Unicode, Text, DateTime, Integer, BLOB, ForeignKey, Enum,Float
 from sqlalchemy.orm import relationship, relation
 from sqlalchemy import Table, MetaData
 from DBP.models.instance import OriginalData, TaskData, ParsedData
 from sqlalchemy.orm import mapper
 from DBP.models.user import User,Enroll
-
+from sqlalchemy.dialects.mysql import INTEGER,VARCHAR
 import re
+
+
+
+def typegen(sch):
+
+	if sch ==  "str":
+		return Unicode(100)
+	elif sch == "int":
+		return Integer
+	else :
+		return Unicode(100)
+
+
+def strgen(typ):
+	if type(typ) == VARCHAR :
+		return "str"
+	elif type(typ) == INTEGER:
+		return "int"
+	else :
+		return "str"
 
 
 class Task(Base):
@@ -64,7 +84,7 @@ class Task(Base):
 			Column('id', Integer, primary_key=True,autoincrement = True),
 			Column('length', Integer),
 			Column('name', Unicode(100)),
-			*(Column("sch_"+colname, Integer) for colname in mappinginfo)
+			*(Column("sch_"+col["name"], Integer) for col in mappinginfo)
 			#,autoload=True, autoload_with=engine
 			)
 
@@ -87,7 +107,8 @@ class Task(Base):
 			Column('status',Enum('Waiting','Evaluated'), nullable = False, server_default = 'Waiting'),
 			Column('score',Integer, nullable = False, server_default= "0"),
 			Column('pnp',Enum('Pass','Nonpass'), nullable = False, server_default = 'Nonpass'),
-			Column('submitterid', Integer, ForeignKey('User.id'), nullable = False)
+			Column('submitterid', Integer, ForeignKey('User.id'), nullable = False),
+			*(Column("null_"+col["name"], Float ) for col in mappinginfo)
 			#,autoload=True, autoload_with=engine
 			)
 
@@ -99,7 +120,7 @@ class Task(Base):
 			Column('id', Integer, primary_key=True,autoincrement = True),
 			Column('submittername', Unicode(100), nullable = False),
 			Column('parsedid', Integer, ForeignKey(parsedTableName+'.id'), nullable = False),
-			*(Column("sch_"+colname, Unicode(100)) for colname in mappinginfo)
+			*(Column("sch_"+col["name"], typegen(col["type"]) ) for col in mappinginfo)
 			#,autoload=True, autoload_with=engine
 			)
 
@@ -137,7 +158,7 @@ class Task(Base):
 		info = list()
 		for col in self.tasktable.columns:
 			if col.name[:3]== "sch":
-				info.append(col.name[4:])
+				info.append(dict(name = col.name[4:], type = strgen(col.type)))
 
 		return info
 
@@ -204,7 +225,7 @@ class Task(Base):
 			tp = dict()
 			tp["submittername"] = td.submittername
 			for sch in schemas :
-				tp[sch] = getattr(td, "sch_"+sch)
+				tp[sch["name"]] = getattr(td, "sch_"+sch["name"])
 
 			tupples.append(tp)
 
@@ -282,7 +303,7 @@ class Task(Base):
 
 
 		for col in data["schemas"] :
-			if not re.match("^[A-Za-z0-9_-]+$", col.name):
+			if not re.match("^[A-Za-z0-9_-]+$", col["name"]):
 				return u"스키마는 영어,숫자, _ 문자열이야 합니다."
 
 

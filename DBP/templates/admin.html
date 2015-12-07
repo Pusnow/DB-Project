@@ -355,7 +355,7 @@
                  <h4>매핑 정보 (다음에 해당하는 위치 정보를 입력)</h4>
                  <div layout="row">
                    <md-input-container flex ng-repeat="col in original.schemas">
-                    <label>{{col.label | angular}}</label>
+                    <label>{{col.label.name | angular}} ({{col.label.type | angular}})</label>
                     <input type="number"  ng-model="col.col">
                   </md-input-container>
                  </div>
@@ -379,7 +379,7 @@
                         <th numeric order-by="length" name="길이" style="max-width : 10px"></th>
                         <th numeric order-by="parsednum" name="파싱데이터시퀀스파일 수" style="max-width : 15px"></th>
                         <th numeric order-by="tasknum" name="태스크 튜플 수" style="max-width : 10px"></th>
-                        <th ng-repeat="sch in task.schemas" numeric name="{{ sch |angular}}"style="max-width : 10px"></th>
+                        <th ng-repeat="sch in task.schemas" numeric name="{{ sch.name |angular}} ({{ sch.type |angular}})"style="max-width : 10px"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -443,13 +443,13 @@
                     <thead md-order="tpquery.order">
                       <tr>
                         <th order-by="submitter" name="제출자"></th>
-                        <th order-by="{{ sch |angular}}" ng-repeat="sch in tupples.schema" name="{{ sch |angular}}"style="max-width : 10px"></th>
+                        <th order-by="{{ sch.name |angular}}" ng-repeat="sch in tupples.schema" name="{{ sch.name |angular}} ({{ sch.type |angular}})"style="max-width : 10px"></th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr ng-repeat="tp in tupples.tupple | orderBy: tpquery.order">
                         <td> {{tp.submittername | angular}}</td>
-                        <td ng-repeat="sch in tupples.schema">{%raw%}{{tp[sch]}}{%endraw%}</td>
+                        <td ng-repeat="sch in tupples.schema">{%raw%}{{tp[sch.name]}}{%endraw%}</td>
                       </tr>
                     </tbody>
                   </table>

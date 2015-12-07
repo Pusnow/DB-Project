@@ -21,7 +21,7 @@ app.controller('HomeController',['$scope', '$mdSidenav','$http','$mdDialog', '$m
     "gender" : "",
     "address" : "",
     "role" : "",
-    "birth" : new Date(),
+    "birth" : new Date("1994-01-01"),
     "cellphone" : ""
     }
 
@@ -51,7 +51,7 @@ app.controller('HomeController',['$scope', '$mdSidenav','$http','$mdDialog', '$m
 
   $scope.join = function(){
     var data = $scope.user;
-    data.birth = $scope.user.birth.toUTCString();
+    data.birth = $scope.user.birth.toDateString();
     $http.post('/user/join', data) 
       .success(function(data) { 
       if (data.code == "success"){
@@ -62,7 +62,7 @@ app.controller('HomeController',['$scope', '$mdSidenav','$http','$mdDialog', '$m
           "gender" : "",
           "address" : "",
           "role" : "",
-          "birth" : new Date(),
+          "birth" : new Date("1994-01-01"),
           "cellphone" : ""
           }
         $mdToast.show(

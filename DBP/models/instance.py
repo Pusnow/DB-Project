@@ -6,6 +6,7 @@ from DBP.models.user import User
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.inspection import inspect
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.mysql import INTEGER,VARCHAR
 import csv
 import io
 
@@ -26,7 +27,7 @@ class OriginalData (object):
 			raise TypeError
 
 		for col in mappinginfo:
-			setattr(self,str( u"sch_"+col["label"]),int(col["col"]))
+			setattr(self,str( u"sch_"+col["label"]["name"]),int(col["col"]))
 
 
 	def dict(self):
@@ -51,6 +52,9 @@ class OriginalData (object):
 			maplist.append(getattr(self,col.name))
 		return maplist
 
+	def getSchema(self):
+		return filter(lambda x: x.name[:3] == u"sch", inspect(self.__class__).columns )
+
 
 	def loadcsv(self,submitter,csvread,nth,duration_start,duration_end):
 		reader = csv.reader(csvread, delimiter=',', quotechar="'")
@@ -60,12 +64,23 @@ class OriginalData (object):
 		counter = 0
 		dupset = set()
 		dupcounter = 0
+		nullcount = dict()
+		schema = self.getSchema()
+		for col in schema:
+			nullcount[col.name] = 0
+
+
 		for rrow in reader:
 			crow = list()
-			dupset.add(unicode(rrow))
-			for mapnum in maplist:
+			for mapnum, col in zip(maplist, schema):
 				crow.append(rrow[mapnum])
 
+				if rrow[mapnum] == "":
+					nullcount[col.name] +=1
+
+
+
+			dupset.add(unicode(crow))
 			writer.writerow(crow)
 			counter += 1
 
@@ -75,6 +90,11 @@ class OriginalData (object):
 		parsedmodel =  self.parsedclass(nth,duration_start,duration_end,csvwrite,counter, counter - len(dupset))
 		parsedmodel.submitterid = submitter.id
 		parsedmodel.evaluatorid = evaluator.id
+
+		for col in schema :
+			setattr(parsedmodel,"null_" + col.name[4:] , nullcount[col.name] / (counter*1.0) )
+
+
 		self.parseds.append(parsedmodel)
 
 		session.commit()
@@ -112,16 +132,20 @@ class ParsedData (object):
 
 
 	def parsecsv(self):
-		print type(self.file.decode("utf8"))
-		print type(self.file)
 		csvread = io.StringIO(self.file.decode("utf8"))
 		reader = csv.reader(utf_8_encoder(csvread), delimiter=',', quotechar="'")
 		parsedlist = list()
 		for row in reader:
 			tsmodel = self.taskclass(User.getUser(self.submitterid).name, self.id)
 			for (column, data) in zip(filter(lambda x: x.name[:3] == u"sch", inspect(self.taskclass).columns ), row):
-				setattr(tsmodel,column.name, data)
 
+				if type(column.type) == INTEGER:
+					try :
+						setattr(tsmodel,column.name, int(data))
+					except :
+						setattr(tsmodel,column.name, None)
+				else :
+					setattr(tsmodel,column.name, data)
 			parsedlist.append(tsmodel)
 
 		return parsedlist
@@ -150,16 +174,24 @@ class ParsedData (object):
 			"pnp" : self.pnp,
 			"submitter" : User.getUser(self.submitterid).name,
 			"original" : self.original.name,
-			"evaluator": User.getUser(self.evaluatorid).name
+			"evaluator": User.getUser(self.evaluatorid).name,
+			"nullratio" : self.nullInfo()
 
 		}
 
 
 	def evaluate(self, score,pnp):
 		self.status = "Evaluated"
-		self.score = score
+		self.score = 5 * score + 25 *( 1.0 - self.duplicatetuplenum/(self.tuplenum * 1.0) ) + 25 * (1.0 - sum(map(lambda x : x['ratio'] ,self.nullInfo()))/(len(self.nullInfo())*1.0))
 		self.pnp = pnp
 		session.commit()
+
+	def nullInfo(self):
+		nulllist = list()
+		for col in filter(lambda x: x.name[:4] == u"null", inspect(self.__class__).columns ):
+			nulllist.append(dict(ratio=getattr(self,col.name) ,name =  col.name[5:] ))
+
+		return nulllist
 
 class TaskData (object):
 	

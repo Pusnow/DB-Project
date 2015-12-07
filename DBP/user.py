@@ -19,13 +19,18 @@ def usjoin():
 @app.route('/user/edit', methods=["POST"])
 def usedit():
 	data = request.get_json()
-	user = User.newUser(data["loginid"], data["password"], data["name"],data["gender"],data["address"],data["role"],data["birth"],data["cellphone"])
+	user = User.getUser(session["userid"])
+
+	if "password" in data :
+		user.editInfo(name = data["name"],password = data["password"], gender= data["gender"], address= data["address"], birth= data["birth"], cellphone= data["cellphone"])
+	else :
+		user.editInfo(name = data["name"],password =  "", gender= data["gender"], address= data["address"], birth= data["birth"], cellphone= data["cellphone"])
 	return jsonify({"code" : "success"})
 
 
 
 @app.route('/user/info', methods=["GET"])
 def usinfo():
-	data = request.get_json()
-	user = User.newUser(data["loginid"], data["password"], data["name"],data["gender"],data["address"],data["role"],data["birth"],data["cellphone"])
-	return jsonify({"code" : "success"})
+
+	user = User.getUser(session["userid"])
+	return jsonify({"code" : "success", "user" : user.dict()})

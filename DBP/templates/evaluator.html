@@ -123,6 +123,8 @@
                     </md-list-item>
                     
                   </md-list>
+                  
+
                   <md-list>
                     <md-list-item class="md-2-line numinfohalf" layout="row" layout-wrap>
                       <div class="md-item-text md-whiteframe-z1" flex>
@@ -139,7 +141,16 @@
       
                     
                   </md-list>
-
+                  <h3>NULL 비율</h3>
+                  <md-list>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap ng-repeat="nr in parsed.nullratio">
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>{{nr.name |angular}}</h3>
+                        <p>{{nr.ratio |angular}}</p>
+                      </div>
+                    </md-list-item>
+                    
+                  </md-list>
 
                    <h3>평가 항목</h3>
                      <div layout ="row">
@@ -163,7 +174,7 @@
     </div>
     
   </div>
-  <iv ng-if="menu=='evaluatedone'" class="page-container" flex style="height:600px;">
+  <div ng-if="menu=='evaluatedone'" class="page-container" flex style="height:600px;">
     <div  class="pagewide" >
       <h1>파싱 데이터 평가 기록</h1>
       <div  layout="row" >
@@ -210,7 +221,59 @@
     </div>
     
   </div>
+   <md-content ng-if="menu=='edituser'" class="page-container" flex>
+    <div class="page">
+      <h1>정보 수정</h1>
+      <div layout layout-sm="column">
+        <md-input-container flex>
+          <label>사용자 아이디</label>
+          <input ng-model="user.loginid">
+        </md-input-container>
+        <md-input-container flex>
+          <label>사용자 비밀번호</label>
+          <input ng-model="user.password">
+        </md-input-container>
+        <md-input-container flex>
+          <label>사용자 이름</label>
+          <input ng-model="user.name">
+        </md-input-container>
+      </div>
+      <div layout layout-sm="column">
+        <md-input-container flex>
+          <label>성별</label>
+          <md-select ng-model="user.gender">
+            <md-option ng-repeat="gender in ['남자','여자']" value="{{gender | angular}}">
+              {{gender | angular}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+        <md-input-container flex>
+          <label>전화번호</label>
+          <input ng-model="user.cellphone">
+        </md-input-container>
+        <md-input-container flex>
+          <label>역할</label>
+          <md-select ng-model="user.role">
+            <md-option ng-repeat="role in ['제출자','평가자']" value="{{role | angular}}">
+              {{role | angular}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+        <md-datepicker ng-model="user.birth" md-placeholder="생년월일"></md-datepicker>
+      </div>
 
+      <md-input-container class="md-block">
+        <label>주소</label>
+        <textarea ng-model="user.address" columns="1" md-maxlength="255" rows="5"></textarea>
+      </md-input-container>
+    
+      <div layout="row" layout-sm="column" >
+        <md-button flex="50" class="md-raised" ng-click="showedituser()">초기화</md-button>
+        <md-button flex="50" class="md-raised md-primary" ng-click="newuser()">수정</md-button>
+      </div>
+    </div>
+    
+  </md-content>
 
 
 

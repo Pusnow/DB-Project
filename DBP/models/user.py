@@ -83,16 +83,27 @@ class User(Base):
 
 		return enrolls
 
+
+	def editInfo(self, name, password, gender, address, birth, cellphone):
+		if password.strip() != "":
+			self.password = generate_password_hash(password)
+		self.name = name
+		self.gender = gender
+		self.address = address
+		self.birth = datetime.strptime(birth, "%a %b %d %Y").date()
+		self.cellphone = cellphone
+		session.commit()
 	
 
 
 
 	@staticmethod
 	def randomEvaluator():
-		maxnum = session.query(func.max(User.id)).filter(User.role == u"평가자").one()[0]
-		userid = random.randrange(1,maxnum +1)
+		maxnum = session.query(User).filter(User.role == u"평가자").count()
+		if maxnum == 0:
+			return session.query(User).get(1)
 
-		return session.query(User).get(userid)
+		return session.query(User).filter(User.role == u"평가자")[random.randrange(0,maxnum)]
 
 	@staticmethod
 	def getUser(id):
@@ -109,7 +120,7 @@ class User(Base):
 		user.gender = gender
 		user.address = address
 		user.role = role
-		user.birth = datetime.strptime(birth, "%a, %d %b %Y %H:%M:%S %Z").date()
+		user.birth = datetime.strptime(birth, "%a %b %d %Y").date()
 		user.cellphone = cellphone
 		session.add(user)
 		session.commit()

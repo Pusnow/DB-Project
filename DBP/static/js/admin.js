@@ -32,7 +32,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     "gender" : "",
     "address" : "",
     "role" : "",
-    "birth" : new Date(),
+    "birth" : new Date("1994-01-01"),
     "cellphone" : ""
     }
 
@@ -42,7 +42,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
   $scope.newuser = function(){
 
     var data = $scope.user;
-    data.birth = $scope.user.birth.toUTCString();
+    data.birth = $scope.user.birth.toDateString();
     $http.post('/admin/newuser', data) 
       .success(function(data) { 
       if (data.code == "success"){
@@ -53,7 +53,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
           "gender" : "",
           "address" : "",
           "role" : "",
-          "birth" : new Date(),
+          "birth" : new Date("1994-01-01"),
           "cellphone" : ""
           }
         $mdToast.show(
@@ -344,7 +344,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
           page: 1
         };
           $scope.tupples = data;
-          
+          console.log(data);
          }
           else if (data.code == "err"){
            
