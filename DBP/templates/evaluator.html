@@ -14,7 +14,7 @@
         <md-icon md-svg-icon="call:chat"></md-icon>
       </md-toolbar-filler>
       <div>
-        <h2 class="md-toolbar-tools">Database Term Project: &nbsp; PostgreSQL 조 - 제출자 패널</h2>
+        <h2 class="md-toolbar-tools">Database Term Project: &nbsp; PostgreSQL 조 - 평가자 패널</h2>
         <md-menu-bar>
           <md-menu>
             <button ng-click="$mdOpenMenu()">
@@ -27,7 +27,7 @@
                 </md-button>
               </md-menu-item>
               <md-menu-item>
-                  <md-button ng-click="showsubmit()">평가 기록</md-button>
+                  <md-button ng-click="showevaluatedone()">평가 기록</md-button>
               </md-menu-item>
             </md-menu-content>
           </md-menu>
@@ -163,7 +163,53 @@
     </div>
     
   </div>
+  <iv ng-if="menu=='evaluatedone'" class="page-container" flex style="height:600px;">
+    <div  class="pagewide" >
+      <h1>파싱 데이터 평가 기록</h1>
+      <div  layout="row" >
+        <md-content flex layout-fill>
+         <md-data-table-container>
+            <table md-data-table class="md-primary" md-progress="deferred">
+              <thead md-order="psquery.order">
+                <tr>
+                  <th order-by="submitter" name="제출자"></th>
+                  <th order-by="original" name="원본데이터타입"></th>
+                  <th numeric order-by="nth" name="회차"></th>
+                  <th order-by="status" name="상태"></th>
+                  <th order-by="pnp" name="P/NP"></th>
+                  <th numeric unit="점" order-by="score" name="점수"></th>
+                  <th numeric unit="개" order-by="tuplenum" name="튜플수"></th>
+                  <th numeric unit="개" order-by="duplicatetuplenum" name="중복튜플수"></th>
+                  <th order-by="duration_start" name="시작"></th>
+                  <th order-by="duration_end" name="끝"></th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="parsed in parsedlist | orderBy: psquery.order">
+                  <td>{{parsed.submitter | angular}}</td>
+                  <td>{{parsed.original | angular}}</td>
+                  <td>{{parsed.nth | angular}}</td>
+                  <td>{{parsed.status | angular}}</td>
+                  <td>{{parsed.pnp | angular}}</td>
+                  <td>{{parsed.score | angular}}</td>
+                  <td>{{parsed.tuplenum | angular}}</td>
+                  <td>{{parsed.duplicatetuplenum | angular}}</td>
+                  <td>{{parsed.duration_start | angular}}</td>
+                  <td>{{parsed.duration_end | angular}}</td>
+                </tr>
+              </tbody>
+                  </table>
+                </md-data-table-container>
 
+
+        </md-content>
+      </div>
+
+
+    </div>
+    
+  </div>
 
 
 

@@ -125,7 +125,11 @@ app.controller('SubmitterContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
             url: '/submitter/submitoriginal',
             data: {file: file, 'prefix': $scope.task.prefix, 'id' : $scope.original.id}
         }).then(function (resp) {
-            console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+            $mdToast.show(
+          $mdToast.simple()
+          .content('원본데이터타입 제출 성공!')
+            .hideDelay(3000)
+          );
         }, function (resp) {
             console.log('Error status: ' + resp.status);
         }, function (evt) {

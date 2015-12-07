@@ -27,6 +27,7 @@ def index():
 def login():
 
 	data = request.get_json()
+	print data
 	if "loginid" not in data or "password" not in data :
 		session['logged_in'] = False
 		abort(401)
@@ -64,3 +65,4 @@ def logout():
 from DBP import admin
 from DBP import submitter
 from DBP import evaluator
+from DBP import user

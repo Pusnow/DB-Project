@@ -132,4 +132,22 @@ def showparseds():
 		return jsonify({"code" : "err", "msg" : "No task"})
 
 	return ""
+
+
+
+@app.route('/admin/showtupples', methods=["POST"])
+def showtupples():
+
+	data = request.get_json()
+	task = Task.getTask(data["prefix"]) 
+
+	if task :
+		tupples = task.getTupples()
+		tupples["code"] = "success"
+		return jsonify(tupples)
+
+	else :
+		return jsonify({"code" : "err", "msg" : "No task"})
+
+	return ""
 	

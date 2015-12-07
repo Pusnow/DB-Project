@@ -16,6 +16,10 @@ def evparseds():
 
 
 
+@app.route('/evaluator/parsedsdone', methods=["GET"])
+def evparsedsdone():
+	return jsonify({"parsedlist" : Task.getEvaluateDone(session["userid"])})
+
 
 @app.route('/evaluator/parsed', methods=["POST"])
 def evparsed():

@@ -61,6 +61,21 @@ app.controller('EvaluatorContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
 
   }
 
+  $scope.showevaluatedone = function(){
+    $http.get('/evaluator/parsedsdone').success(function(data){
+      $scope.psquery = {
+          order: 'id',
+          limit: 10,
+          page: 1
+        };
+      $scope.menu ="evaluatedone"
+      $scope.parsedlist = data.parsedlist
+      console.log($scope.parsedlist)
+
+
+    });
+  }
+
 
 
 }]);

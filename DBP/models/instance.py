@@ -83,8 +83,6 @@ class OriginalData (object):
 
 	def getInfoByUser(self,user):
 		data = self.dict()
-		nth =  session.query( func.max(self.parsedclass.nth)).filter(self.parsedclass.submitterid == user.id).first()
-		
 		data["nth"] = self.getNextnth (user)
 
 
@@ -92,7 +90,7 @@ class OriginalData (object):
 
 
 	def getNextnth(self,user):
-		nth =  session.query( func.max(self.parsedclass.nth)).filter(self.parsedclass.submitterid == user.id).first()
+		nth =  session.query( func.max(self.parsedclass.nth)).filter(self.parsedclass.originalid == self.id).filter(self.parsedclass.submitterid == user.id).first()
 		if nth[0]:
 			return nth[0] +1
 		else :

@@ -43,7 +43,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
 
     var data = $scope.user;
     data.birth = $scope.user.birth.toUTCString();
-    $http.post('/admin/newuser', $scope.user) 
+    $http.post('/admin/newuser', data) 
       .success(function(data) { 
       if (data.code == "success"){
          $scope.user = {
@@ -92,7 +92,14 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     $http.get('/admin/users') 
       .success(function(data) { 
         $scope.menu = 'users';
-        $scope.userlist = data.users
+        var userlist = data.users;
+        console.log(data);    
+        for (var i in userlist){
+          userlist[i].birth = new Date(userlist[i].birthstring );
+
+        }
+        console.log(userlist);    
+        $scope.userlist = userlist;
     }) 
     .error(function(err) { 
       console.log(err);
@@ -103,7 +110,10 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
   $scope.showuser = function(id){
     $http.post('/admin/user', {"id" : id}) 
       .success(function(data) { 
-        $scope.user = data.user
+        var user  = data.user;
+        user.birth = new Date(user.birthstring );
+        $scope.user = user
+        console.log($scope.user);
     }) 
     .error(function(err) { 
       console.log(err);
@@ -305,7 +315,33 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
       .error(function(err) { 
         console.log(err);
       });
+
+
   }
+  $scope.showtupples = function(){
+    $http.post('/admin/showtupples', $scope.task) 
+      .success(function(data) { 
+        if (data.code == "success"){
+          $scope.tpquery = {
+          order: 'id',
+          limit: 10,
+          page: 1
+        };
+          $scope.tupples = data;
+          
+         }
+          else if (data.code == "err"){
+           
+          }
+      }) 
+      .error(function(err) { 
+        console.log(err);
+      });
+
+
+
+  }
+
 
    $scope.showoriginals = function(){
     initoriginals();
@@ -315,6 +351,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
   $scope.logout = function(){
     $http.post('/logout').success(function(){location.reload();});
   }
+
 
 
 

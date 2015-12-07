@@ -192,6 +192,27 @@ class Task(Base):
 		return session.query(self.parsed).order_by(self.parsed.id).all()
 
 
+	def getTaskDatas(self):
+		return session.query(self.task).order_by(self.task.id).all()
+
+
+	def getTupples(self):
+		schemas = self.getMapInfo()
+
+		tupples = list()
+		for td in self.getTaskDatas():
+			tp = dict()
+			tp["submittername"] = td.submittername
+			for sch in schemas :
+				tp[sch] = getattr(td, "sch_"+sch)
+
+			tupples.append(tp)
+
+		return dict (schema = schemas, tupple = tupples)
+
+
+
+
 	def getParsed(self,id):
 		return session.query(self.parsed).get(id)
 
@@ -280,8 +301,8 @@ class Task(Base):
 			return u"매핑정보가 중복되었습니다."
 
 		for mapinfo in maplist:
-			if mapinfo >= data["length"]:
-				return u"매핑정보가 길이보다 큽니다."
+			if mapinfo >= data["length"] or data["length"] < 0 :
+				return u"매핑정보는 0 이상 길이 이하 이어야 합니다."
 			try :
 				int(mapinfo)
 			except:
@@ -331,6 +352,22 @@ class Task(Base):
 		return evlist
 
 
+
+	@staticmethod
+	def getEvaluateDone(userid):
+		tasks = session.query(Task).all()
+		evlist = []
+
+		for task in tasks:
+			task.setTables()
+			pslist = session.query(task.parsed).filter(task.parsed.evaluatorid == userid).filter(task.parsed.status == u"Evaluated").all()
+			for parsed in pslist:
+				p = parsed.dict()
+				p["taskprefix"] = task.prefix
+				p["taskname"] = task.name
+				evlist.append(p)
+
+		return evlist
 
 
 

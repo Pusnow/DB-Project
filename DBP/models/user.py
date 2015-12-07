@@ -63,11 +63,12 @@ class User(Base):
 		"address" : self.address,
 		"role" : self.role,
 		"score" : self.score,
-		"birth" : self.birth,
+		"birthstring" : self.birth,
 		"cellphone" : self.cellphone
 		}
-		if data["birth"] :
-			data["birth"] = data["birth"].isoformat()
+		if data["birthstring"] :
+			data["birthstring"] = data["birthstring"].isoformat()
+
 
 		return data
 

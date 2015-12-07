@@ -419,11 +419,25 @@
                 
               </md-tab-body>
             </md-tab>
-            <md-tab id="tab6">
+            <md-tab id="tab6" md-on-select ="showtupples()">
               <md-tab-label>태스크 데이터 정보</md-tab-label>
               <md-tab-body>
-                View for Item #3 <br/>
-                data.selectedIndex = 2;
+                 <md-data-table-container flex>
+                  <table md-data-table class="md-primary" md-progress="deferred">
+                    <thead md-order="tpquery.order">
+                      <tr>
+                        <th order-by="submitter" name="제출자"></th>
+                        <th order-by="{{ sch |angular}}" ng-repeat="sch in tupples.schema" name="{{ sch |angular}}"style="max-width : 10px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="tp in tupples.tupple | orderBy: tpquery.order">
+                        <td> {{tp.submittername | angular}}</td>
+                        <td ng-repeat="sch in tupples.schema">{%raw%}{{tp[sch]}}{%endraw%}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-data-table-container>
               </md-tab-body>
             </md-tab>
           </md-tabs>
