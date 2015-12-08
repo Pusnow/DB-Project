@@ -118,7 +118,7 @@ class User(Base):
 			submitinfo["parsed"] += session.query(en.task.parsed).filter(en.task.parsed.submitterid == self.id).count()
 			ps = session.query(en.task.parsed).filter(en.task.parsed.submitterid == self.id).filter(en.task.parsed.status == u"Evaluated").all()
 			for p in ps:
-				submitinfo["taskdata"] += len(p.task)
+				submitinfo["taskdata"] += len(p.tasks)
 
 				
 		info["submitinfo"] = submitinfo
@@ -128,7 +128,6 @@ class User(Base):
 	@staticmethod
 	def randomEvaluator():
 		maxnum = session.query(User).filter(User.role == u"평가자").count()
-		print maxnum
 		if maxnum == 0:
 			return session.query(User).filter(User.role == u"관리자").first()
 

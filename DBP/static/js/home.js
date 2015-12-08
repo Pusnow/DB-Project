@@ -1,5 +1,23 @@
 var app = angular.module('DBPapp', ['ngMaterial','ngFileUpload','md.data.table']);
 
+function strtodate(str){
+
+  return new Date(str);
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
 app.controller('HomeController',['$scope', '$mdSidenav','$http','$mdDialog', '$mdToast', function($scope,$mdSidenav,$http,$mdDialog, $mdToast) {
   $scope.menu = "home";
   $scope.toggleSidenav = function(menuId) {

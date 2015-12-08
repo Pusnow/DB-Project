@@ -152,6 +152,9 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
       if (info[1] == "int"){
         type = "int";
       }
+      if (info[1] == "datetime"){
+        type = "datetime";
+      }
     }
 
       return {
@@ -369,8 +372,12 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
           limit: 10,
           page: 1
         };
+
+        console.log(data);
           $scope.tupples = data;
-          console.log(data);
+
+
+
          }
           else if (data.code == "err"){
            

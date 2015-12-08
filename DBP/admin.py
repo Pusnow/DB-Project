@@ -34,7 +34,6 @@ def users():
 def user():
 
 	data = request.get_json()
-	print data
 	user = User.getUser(data["id"])
 	return jsonify({"user" : user.dict()})
 

@@ -61,7 +61,7 @@ def evsubmitevaluate():
 
 	if data["pass"]:
 		parsed.evaluate(data["score"] , "Pass")
-		user = User.getUser(parsed.userid).setScore()
+		user = User.getUser(parsed.submitterid).setScore()
 		parsed.insertcsv()
 	else :
 		parsed.evaluate(data["score"] , "Nonpass")

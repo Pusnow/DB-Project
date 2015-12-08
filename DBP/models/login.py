@@ -8,8 +8,6 @@ class login(Resource):
 		if session['logged_in']:
 		return jsonify(dict(msg=u"이미 로그인 되어 있습니다."))
 
-
-		print data['loginid'],data['password']
 		user = User.login(data['loginid'],data['password'])
 
 		if user :

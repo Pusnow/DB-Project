@@ -6,7 +6,8 @@ from DBP.models.user import User
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.inspection import inspect
 from sqlalchemy.sql import func
-from sqlalchemy.dialects.mysql import INTEGER,VARCHAR
+from sqlalchemy.dialects.mysql import INTEGER,VARCHAR, DATETIME
+from datetime import datetime
 import csv
 import io
 
@@ -144,6 +145,13 @@ class ParsedData (object):
 						setattr(tsmodel,column.name, int(data))
 					except :
 						setattr(tsmodel,column.name, None)
+
+				elif type(column.type) == DATETIME:
+					try :
+						setattr(tsmodel,column.name, datetime.strptime( data, "%Y-%m-%d %H:%M"))
+					except :
+						setattr(tsmodel,column.name, None)
+	
 				else :
 					setattr(tsmodel,column.name, data)
 			parsedlist.append(tsmodel)

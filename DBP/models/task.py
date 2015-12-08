@@ -1,13 +1,13 @@
 #-*- coding: utf-8 -*-
 
 from DBP.models import Base, engine, session
-from sqlalchemy import Column,  Unicode, Text, DateTime, Integer, BLOB, ForeignKey, Enum,Float
+from sqlalchemy import Column,  Unicode, Text, DateTime, Integer, BLOB, ForeignKey, Enum,Float,Date
 from sqlalchemy.orm import relationship, relation
 from sqlalchemy import Table, MetaData
 from DBP.models.instance import OriginalData, TaskData, ParsedData
 from sqlalchemy.orm import mapper
 from DBP.models.user import User,Enroll
-from sqlalchemy.dialects.mysql import INTEGER,VARCHAR
+from sqlalchemy.dialects.mysql import INTEGER,VARCHAR,DATETIME
 import re
 
 
@@ -18,6 +18,8 @@ def typegen(sch):
 		return Unicode(100)
 	elif sch == "int":
 		return Integer
+	elif sch == "datetime":
+		return DateTime
 	else :
 		return Unicode(100)
 
@@ -27,6 +29,8 @@ def strgen(typ):
 		return "str"
 	elif type(typ) == INTEGER:
 		return "int"
+	elif type(typ) == DATETIME:
+		return "datetime"
 	else :
 		return "str"
 
@@ -96,8 +100,8 @@ class Task(Base):
 
 		self.parsedtable = Table(parsedTableName,metadata,
 			Column('id', Integer, primary_key=True,autoincrement = True),
-			Column('duration_start', DateTime, nullable = False),
-			Column('duration_end', DateTime, nullable = False),
+			Column('duration_start', Date, nullable = False),
+			Column('duration_end', Date, nullable = False),
 			Column('nth', Integer, nullable = False, server_default = "1"),
 			Column('file',BLOB, nullable = False),
 			Column('tuplenum',Integer, nullable = False),
@@ -225,7 +229,14 @@ class Task(Base):
 			tp = dict()
 			tp["submittername"] = td.submittername
 			for sch in schemas :
-				tp[sch["name"]] = getattr(td, "sch_"+sch["name"])
+				if sch["type"] == "datetime":
+					if getattr(td, "sch_"+sch["name"]):
+						tp[sch["name"]] = getattr(td, "sch_"+sch["name"]).strftime("%Y-%m-%d %H:%M")
+					else :
+						tp[sch["name"]] = "no data"
+				else :
+
+					tp[sch["name"]] = getattr(td, "sch_"+sch["name"])
 
 			tupples.append(tp)
 

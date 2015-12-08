@@ -146,6 +146,7 @@ $scope.showstatistics = function(){
    $http.get('/submitter/statistics') 
       .success(function(data) { 
         $scope.menu = "statistics";
+        console.log(data);
         var user  = data.user;
         user.birth = new Date(user.birthstring );
         $scope.user = user;
