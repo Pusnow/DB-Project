@@ -221,13 +221,14 @@
     </div>
     
   </div>
-   <md-content ng-if="menu=='edituser'" class="page-container" flex>
+
+  <md-content ng-if="menu=='edituser'" class="page-container" flex>
     <div class="page">
       <h1>정보 수정</h1>
       <div layout layout-sm="column">
         <md-input-container flex>
           <label>사용자 아이디</label>
-          <input ng-model="user.loginid">
+          <input ng-model="user.loginid" disabled>
         </md-input-container>
         <md-input-container flex>
           <label>사용자 비밀번호</label>
@@ -253,13 +254,17 @@
         </md-input-container>
         <md-input-container flex>
           <label>역할</label>
-          <md-select ng-model="user.role">
+          <md-select ng-model="user.role" disabled>
             <md-option ng-repeat="role in ['제출자','평가자']" value="{{role | angular}}">
               {{role | angular}}
             </md-option>
           </md-select>
         </md-input-container>
+        <div layout="column">
+        <label class="md-caption">생년월일</label>
         <md-datepicker ng-model="user.birth" md-placeholder="생년월일"></md-datepicker>
+        </div>
+        
       </div>
 
       <md-input-container class="md-block">
@@ -269,12 +274,21 @@
     
       <div layout="row" layout-sm="column" >
         <md-button flex="50" class="md-raised" ng-click="showedituser()">초기화</md-button>
-        <md-button flex="50" class="md-raised md-primary" ng-click="newuser()">수정</md-button>
+        <md-button flex="50" class="md-raised md-primary" ng-click="edituser()">수정</md-button>
       </div>
     </div>
     
   </md-content>
+  <md-content ng-if="menu=='deleteuser'" class="page-container" flex>
+    <div class="page">
+      <h1>회원 탈퇴</h1>
+      <p>회원을 탈퇴하시겠습니까?</p>
+      <p>모든 제출된 정보는 지워집니다.</p>
+      <md-button flex="50" class="md-raised md-primary" ng-click="deleteuser()">탈퇴</md-button>
 
+    </div>
+    
+  </md-content>
 
 
 

@@ -95,13 +95,42 @@ class User(Base):
 		session.commit()
 	
 
+	def setScore(self):
+		sums = list()
+		for en in self.enrolls:
+			en.task.setTables()
+
+			ps = session.query(en.task.parsed).filter(en.task.parsed.submitterid == self.id).filter(en.task.parsed.status == u"Evaluated").all()
+			for p in ps:
+				sums.append(p.score)
+
+
+		self.score = sum(sums)/len(sums)
+
+
+	def getSubmitInfo(self):
+		info = self.dict()
+
+		submitinfo = dict(parsed = 0, taskdata = 0)
+		for en in self.enrolls:
+			en.task.setTables()
+
+			submitinfo["parsed"] += session.query(en.task.parsed).filter(en.task.parsed.submitterid == self.id).count()
+			ps = session.query(en.task.parsed).filter(en.task.parsed.submitterid == self.id).filter(en.task.parsed.status == u"Evaluated").all()
+			for p in ps:
+				submitinfo["taskdata"] += len(p.task)
+
+				
+		info["submitinfo"] = submitinfo
+		return info
 
 
 	@staticmethod
 	def randomEvaluator():
 		maxnum = session.query(User).filter(User.role == u"평가자").count()
+		print maxnum
 		if maxnum == 0:
-			return session.query(User).get(1)
+			return session.query(User).filter(User.role == u"관리자").first()
 
 		return session.query(User).filter(User.role == u"평가자")[random.randrange(0,maxnum)]
 
@@ -135,6 +164,25 @@ class User(Base):
 			return user
 		else :
 			return None
+
+
+
+	@staticmethod
+	def deleteUser(user):
+
+		for en in user.enrolls:
+			en.task.setTables()
+
+			ps = session.query(en.task.parsed).filter(en.task.parsed.submitterid == user.id).all()
+			for p in ps:
+				for t in p.tasks:
+					session.delete(t)
+				session.delete(p)
+
+		for e in user.enrolls :
+			session.delete(e)
+		session.delete(user)
+		session.commit()
 
 
 

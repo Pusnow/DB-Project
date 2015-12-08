@@ -32,7 +32,9 @@ def users():
 
 @app.route('/admin/user', methods=["POST"])
 def user():
+
 	data = request.get_json()
+	print data
 	user = User.getUser(data["id"])
 	return jsonify({"user" : user.dict()})
 
@@ -150,4 +152,18 @@ def showtupples():
 		return jsonify({"code" : "err", "msg" : "No task"})
 
 	return ""
+
+
+@app.route('/admin/useredit', methods=["POST"])
+def useredit():
+	data = request.get_json()
+	user = User.getUser(data["id"])
+
+	if "password" in data :
+		user.editInfo(name = data["name"],password = data["password"], gender= data["gender"], address= data["address"], birth= data["birth"], cellphone= data["cellphone"])
+	else :
+		user.editInfo(name = data["name"],password =  "", gender= data["gender"], address= data["address"], birth= data["birth"], cellphone= data["cellphone"])
+	return jsonify({"code" : "success"})
+
+
 	

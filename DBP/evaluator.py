@@ -55,13 +55,13 @@ def getfile(prefix,id):
 @app.route('/evaluator/submitevaluate', methods=["POST"])
 def evsubmitevaluate():
 	data = request.get_json()
-	print data
 	task = Task.getTask(data["prefix"])
 
 	parsed = task.getParsed(data["id"])
 
 	if data["pass"]:
 		parsed.evaluate(data["score"] , "Pass")
+		user = User.getUser(parsed.userid).setScore()
 		parsed.insertcsv()
 	else :
 		parsed.evaluate(data["score"] , "Nonpass")

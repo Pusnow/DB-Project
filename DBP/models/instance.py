@@ -184,6 +184,8 @@ class ParsedData (object):
 		self.status = "Evaluated"
 		self.score = 5 * score + 25 *( 1.0 - self.duplicatetuplenum/(self.tuplenum * 1.0) ) + 25 * (1.0 - sum(map(lambda x : x['ratio'] ,self.nullInfo()))/(len(self.nullInfo())*1.0))
 		self.pnp = pnp
+
+		
 		session.commit()
 
 	def nullInfo(self):

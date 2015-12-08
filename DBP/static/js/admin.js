@@ -96,9 +96,9 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
         console.log(data);    
         for (var i in userlist){
           userlist[i].birth = new Date(userlist[i].birthstring );
-
-        }
-        console.log(userlist);    
+          userlist[i].age = parseInt((new Date() - new Date(userlist[i].birthstring ) )/(60*60*24*365*1000*10)) + "0대";
+          console.log(userlist[i].age );
+        } 
         $scope.userlist = userlist;
     }) 
     .error(function(err) { 
@@ -113,13 +113,36 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
         var user  = data.user;
         user.birth = new Date(user.birthstring );
         $scope.user = user
-        console.log($scope.user);
     }) 
     .error(function(err) { 
       console.log(err);
     });
 
   }
+
+  $scope.edituser = function (){
+  var data = $scope.user;
+  data.birth = $scope.user.birth.toDateString();
+  $http.post('/admin/useredit',data) 
+      .success(function(data) { 
+         if (data.code == "success"){
+          $scope.showuser($scope.user.id);
+        $mdToast.show(
+          $mdToast.simple()
+          .content('사용자 정보 수정 성공!')
+            .hideDelay(3000)
+        );
+      }
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+
+}
+
+
+
   $scope.newSch = function(chip) {
 
     var info = chip.split(":")
@@ -199,11 +222,13 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
 
   }
 
-
+  $scope.selectedIndex  = 0;
   $scope.showtask = function(prefix){
+    $scope.selectedIndex = 0;
     $http.post('/admin/task',{"prefix" : prefix}) 
       .success(function(data) { 
         $scope.task = data.task;
+        
         initoriginalform();
 
     }) 
@@ -249,6 +274,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
   }
 
   function initoriginalform(){
+
      $scope.original = {
       "prefix" : $scope.task.prefix,
       "name" : "",
@@ -368,6 +394,7 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     $http.post('/logout').success(function(){location.reload();});
   }
 
+  
 
 
 

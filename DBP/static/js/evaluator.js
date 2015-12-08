@@ -74,7 +74,55 @@ app.controller('EvaluatorContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
 
 
     });
+  } 
+$scope.showedituser = function (){
+  
+  $http.get('/user/info') 
+      .success(function(data) { 
+        $scope.menu = "edituser";
+        var user  = data.user;
+        user.birth = new Date(user.birthstring );
+        $scope.user = user;
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+
+}
+
+    
+$scope.edituser = function (){
+  var data = $scope.user;
+  data.birth = $scope.user.birth.toDateString();
+  $http.post('/user/edit',data) 
+      .success(function(data) { 
+         if (data.code == "success"){
+          $scope.showedituser();
+        $mdToast.show(
+          $mdToast.simple()
+          .content('사용자 정보 수정 성공!')
+            .hideDelay(3000)
+        );
+      }
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+
+}
+
+$scope.showdeleteuser = function(){
+   $scope.menu = "deleteuser";
+
+
+}
+
+$scope.deleteuser =  function(){
+    $http.post('/user/delete').success(function(){location.reload();});
   }
+
 
 
 

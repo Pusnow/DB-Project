@@ -4,7 +4,7 @@ from flask import Flask, request, url_for, abort, render_template, jsonify, sess
 from DBP import app
 from DBP.models.user import User
 from DBP.models.task import Task
-
+from DBP.view import logout
 
 
 @app.route('/user/join', methods=["POST"])
@@ -34,3 +34,12 @@ def usinfo():
 
 	user = User.getUser(session["userid"])
 	return jsonify({"code" : "success", "user" : user.dict()})
+
+
+@app.route('/user/delete', methods=["POST"])
+def usdelete():
+
+	user = User.getUser(session["userid"])
+	User.deleteUser(user)
+
+	return logout()

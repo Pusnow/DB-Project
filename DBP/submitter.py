@@ -65,6 +65,11 @@ def sbsubmit(start = 0, end = 10):
 	return jsonify({"tasks" : user.enrollStatus() })
 
 
+@app.route('/submitter/statistics', methods=["GET"])
+def sbgetinfo():
+	user = User.getUser(session["userid"])
+	return jsonify( {"user" : user.getSubmitInfo() })
+
 
 
 

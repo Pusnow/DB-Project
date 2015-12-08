@@ -138,7 +138,26 @@ app.controller('SubmitterContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
         });
     };
 
-    
+$scope.showstatistics = function(){
+   $scope.menu = "statistics";
+
+   
+
+   $http.get('/submitter/statistics') 
+      .success(function(data) { 
+        $scope.menu = "statistics";
+        var user  = data.user;
+        user.birth = new Date(user.birthstring );
+        $scope.user = user;
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+
+}
+
+
 $scope.showedituser = function (){
   
   $http.get('/user/info') 
@@ -176,6 +195,16 @@ $scope.edituser = function (){
 
 
 }
+
+$scope.showdeleteuser = function(){
+   $scope.menu = "deleteuser";
+
+
+}
+
+$scope.deleteuser =  function(){
+    $http.post('/user/delete').success(function(){location.reload();});
+  }
 
 
 }]);

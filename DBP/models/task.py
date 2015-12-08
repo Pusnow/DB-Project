@@ -103,7 +103,7 @@ class Task(Base):
 			Column('tuplenum',Integer, nullable = False),
 			Column('duplicatetuplenum',Integer, nullable = False),
 			Column('originalid', Integer, ForeignKey(originalTableName+'.id'), nullable = False),
-			Column('evaluatorid', Integer, ForeignKey('User.id'),  nullable = False),
+			Column('evaluatorid', Integer, ForeignKey('User.id'),  nullable = True),
 			Column('status',Enum('Waiting','Evaluated'), nullable = False, server_default = 'Waiting'),
 			Column('score',Integer, nullable = False, server_default= "0"),
 			Column('pnp',Enum('Pass','Nonpass'), nullable = False, server_default = 'Nonpass'),

@@ -184,8 +184,11 @@
       
         <div layout="row" >
           <md-content flex="30" layout-fill>
+          <md-input-container md-no-float layout-padding>
+         <input ng-model="usersearch" type="text" placeholder="검색">
+        </md-input-container>
             <md-list>
-              <md-list-item class="md-3-line" ng-repeat="user in userlist" ng-click = "showuser(user.id)">
+              <md-list-item class="md-3-line" ng-repeat="user in userlist | filter:usersearch" ng-click = "showuser(user.id)">
                 <div class="md-list-item-text" layout="column">
 
                   <h3>{{ user.name  | angular}} ({{ user.loginid  | angular}})</h3>
@@ -198,7 +201,7 @@
             <div layout="row" layout-sm="column">
               <md-input-container flex>
                 <label>사용자 아이디</label>
-                <input ng-model="user.loginid">
+                <input ng-model="user.loginid" disabled>
               </md-input-container>
               <md-input-container flex>
                 <label>사용자 비밀번호</label>
@@ -227,10 +230,7 @@
               </md-input-container>
               <md-input-container flex>
                 <label>역할</label>
-                <md-select ng-model="user.role">
-                  <md-option ng-repeat="role in ['제출자','평가자']" value="{{role | angular}}">
-                    {{role | angular}}
-                  </md-option>
+                <input ng-model="user.role" disabled>
                 </md-select>
               </md-input-container>
               
@@ -245,12 +245,11 @@
               <md-button flex class="md-raised md-primary" ng-click="edituser()">수정</md-button>
             </div>
           </div>
-          </md-content>
         </div>
     </div>
     
   </div>
-  <div ng-if="menu=='task'" class="page-container" flex style="height:600px;">
+  <div ng-show="menu=='task'" class="page-container" flex style="height:600px;">
     <div  class="pagewide" >
       <h1>태스크 목록</h1>
       <div  layout="row" >
@@ -270,7 +269,7 @@
 
         </md-content>
         <div flex>
-          <md-tabs class="" md-align-tabs="" layout-fill ng-if="task.prefix">
+          <md-tabs class="" md-align-tabs="" layout-fill ng-show="task.prefix" md-selected="selectedIndex">
             <md-tab id="tab1">
               <md-tab-label>태스크 정보</md-tab-label>
               <md-tab-body>
@@ -402,6 +401,7 @@
                   <table md-data-table class="md-primary" md-progress="deferred">
                     <thead md-order="psquery.order">
                       <tr>
+                        <th name = "다운로드"> </th>
                         <th order-by="original" name="원본데이터타입"style="max-width : 40px"></th>
                         <th  order-by="submitter" name="제출자" style="max-width : 30px"></th>
                         <th  order-by="evaluator" name="평가자" style="max-width : 30px"></th>
@@ -417,6 +417,7 @@
                     </thead>
                     <tbody>
                       <tr ng-repeat="psd in parsedlist | orderBy: psquery.order">
+                        <td><a href = "/evaluator/getfile/{{task.prefix | angular}}/{{psd.id | angular}}">link</a></td>
                         <td>{{psd.original | angular}}</td>
                         <td>{{psd.submitter | angular}}</td>
                         <td>{{psd.evaluator | angular}}</td>

@@ -30,7 +30,7 @@
                   <md-button ng-click="showsubmit()">태스크 데이터 제출</md-button>
               </md-menu-item>
               <md-menu-item>
-                  <md-button ng-click="showstatus()">제출 현황</md-button>
+                  <md-button ng-click="showstatistics()">제출자 상태</md-button>
               </md-menu-item>
             </md-menu-content>
           </md-menu>
@@ -335,9 +335,48 @@
     </div>
     
   </md-content>
+  <md-content ng-if="menu=='deleteuser'" class="page-container" flex>
+    <div class="page">
+      <h1>회원 탈퇴</h1>
+      <p>회원을 탈퇴하시겠습니까?</p>
+      <p>모든 제출된 정보는 지워집니다.</p>
+      <md-button flex="50" class="md-raised md-primary" ng-click="deleteuser()">탈퇴</md-button>
 
+    </div>
+    
+  </md-content>
 
+  <md-content class="page-container" flex  ng-if = "menu=='statistics'">
+    <div class="pagewide">
+      <md-content>
+                  <h2>{{user.name|angular}} ({{user.loginid|angular}}) 님의 상태입니다.</h2>
+                  <md-list>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>점수</h3>
+                        <p>{{user.score|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>제출한 CSV 파일 수</h3>
+                        <p>{{user.submitinfo.parsed|angular}}</p>
+                      </div>
+                    </md-list-item>
+                    <md-list-item class="md-2-line numinfo" layout="row" layout-wrap>
+                      <div class="md-item-text md-whiteframe-z1" flex>
+                        <h3>제출한 튜플 수</h3>
+                        <p>{{task.submitinfo.taskdata|angular}}</p>
+                      </div>
+                    </md-list-item>
 
+                    
+                  </md-list>
+                </md-content>
+
+</div>
+    
+  </md-content>
 
 
 
