@@ -309,6 +309,7 @@
             <md-tab id="tab2" md-on-select ="showsubmitters(task.prefix)">
               <md-tab-label>제출자 관리</md-tab-label>
               <md-tab-body>
+              <h2>{{task.name|angular}} ({{task.prefix|angular}})에 제출자 신청을 한 사람 목록</h2>
                 <md-data-table-container flex ="50">
                   <table md-data-table class="md-primary" md-progress="deferred">
                     <thead md-order="sbquery.order">
@@ -396,6 +397,7 @@
             </md-tab>
             <md-tab id="tab5" md-on-select ="showparseds()">
               <md-tab-label>파싱 데이터 시퀀스 파일 정보</md-tab-label>
+              <h2>{{task.name|angular}} ({{task.prefix|angular}})의 파싱 데이터 시퀀스 파일</h2>
               <md-tab-body>
                <md-data-table-container flex>
                   <table md-data-table class="md-primary" md-progress="deferred">
@@ -439,6 +441,7 @@
             <md-tab id="tab6" md-on-select ="showtupples()">
               <md-tab-label>태스크 데이터 정보</md-tab-label>
               <md-tab-body>
+                <h2>{{task.name|angular}} ({{task.prefix|angular}})의 태스크 데이터 정보 (<a href="/admin/gettaskcsv/{{task.prefix|angular}}">CSV</a>)</h2>
                  <md-data-table-container flex>
                   <table md-data-table class="md-primary" md-progress="deferred">
                     <thead md-order="tpquery.order">

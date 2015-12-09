@@ -9,7 +9,8 @@ from sqlalchemy.orm import mapper
 from DBP.models.user import User,Enroll
 from sqlalchemy.dialects.mysql import INTEGER,VARCHAR,DATETIME
 import re
-
+import io
+import csv
 
 
 def typegen(sch):
@@ -277,6 +278,30 @@ class Task(Base):
 	def changeSubmitterStatus(self,userid,status):
 		self.enroll.filter(Enroll.userid == userid).first().status = status
 		session.commit()
+
+	def getCSV(self):
+		csvwrite = io.BytesIO()
+		writer =  csv.writer(csvwrite, delimiter=',', quotechar="'")
+		schema = self.getMapInfo()
+
+		for tupple in self.getTaskDatas():
+			row = list()
+
+			for sch in schema:
+				if sch["type"] == "datetime":
+					if getattr(tupple, "sch_"+sch["name"]):
+						row.append(getattr(tupple, "sch_"+sch["name"]).strftime("%Y-%m-%d %H:%M"))
+					else :
+						row.append("no data")
+				elif  sch["type"] == "str":
+					row.append(getattr(tupple, "sch_"+sch["name"]).encode("utf8"))
+				else :
+					row.append(getattr(tupple, "sch_"+sch["name"]))
+
+			writer.writerow(row)
+
+		csvwrite.seek(0)
+		return csvwrite
 
 
 

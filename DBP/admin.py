@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 
-from flask import Flask, request, url_for, abort, render_template, jsonify, session,redirect
+from flask import Flask, request, url_for, abort, render_template, jsonify, session,redirect,send_file
 from DBP import app
 from DBP.models.user import User
 from DBP.models.task import Task
@@ -163,6 +163,28 @@ def useredit():
 	else :
 		user.editInfo(name = data["name"],password =  "", gender= data["gender"], address= data["address"], birth= data["birth"], cellphone= data["cellphone"])
 	return jsonify({"code" : "success"})
+
+
+
+@app.route('/admin/gettaskcsv/<string:prefix>', methods=["GET"])
+def gettaskcsv(prefix):
+
+	task = Task.getTask(prefix)
+	csv = task.getCSV()
+
+	return send_file(csv, attachment_filename="taskdata.csv", as_attachment=True,mimetype="text/csv")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	
