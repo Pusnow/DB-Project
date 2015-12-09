@@ -279,6 +279,13 @@
                     <label>주기(일)</label>
                     <input ng-model="task.duration">
                   </md-input-container>
+                  <md-input-container flex>
+                  <label>상태</label>
+                  <md-select ng-model="task.status" placeholder="상태" md-on-close="taskstatus(task.prefix, task.status)">
+                    <md-option ng-value="status" ng-repeat="status in ['Collecting', 'Stop']">{{status | angular}}</md-option>
+                  </md-select>
+                  </md-input-container>
+
                   <md-input-container class="md-block">
                     <label>설명</label>
                     <textarea ng-model="task.information" columns="1" md-maxlength="150" rows="5"></textarea>
@@ -412,8 +419,8 @@
                         <th numeric order-by="tuplenum" name="튜플 수" style="max-width : 10px"></th>
                         <th numeric order-by="duplicatetuplenum" name="중복 수" style="max-width : 20px"></th>
                         <th numeric order-by="score" name="점수" style="max-width : 10px"></th>
-                        <th  order-by="duration_start" name="시작" style="max-width : 15px"></th>
-                        <th  order-by="duration_end" name="끝" style="max-width : 15px"></th>
+                        <th  order-by="duration_start" name="시작일" style="max-width : 15px"></th>
+                        <th  order-by="duration_end" name="종료일" style="max-width : 15px"></th>
                         <th  order-by="pnp" name="P/NP" style="max-width : 20px"></th>
                       </tr>
                     </thead>

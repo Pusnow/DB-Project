@@ -22,7 +22,10 @@ def sbtask():
 	user = User.getUser(session["userid"])
 	if task :
 		json = task.dict()
+
 		status = task.checkUserStatus(session["userid"])
+		if task.status == "Stop":
+			status = "Stop"
 		json["originals"] =  map(lambda x : x.dict(),task.getOriginals())
 		json["originalnum"] = len(json["originals"] )
 		json["enrolled"] = task.checkUser(session["userid"])
@@ -96,11 +99,19 @@ def sbsubmitoriginal():
 	user = User.getUser(session["userid"])
 	original = task.getOriginal(data["id"])
 
-	csv = request.files["file"].stream
 
-	original.loadcsv(user,csv,original.getNextnth(user),datetime(2015, 1, 1),datetime(2016, 1, 1))
 
-	return ""
+	if request.files["file"].filename[-3:] == "csv":
+		csv = request.files["file"].stream
+		original.loadcsv(user,csv,original.getNextnth(user),datetime.strptime(data["duration_start"], "%a %b %d %Y").date(),datetime.strptime(data["duration_end"], "%a %b %d %Y").date())
+	elif request.files["file"].filename[-4:] == "xlsx" :
+		xlsx = request.files["file"].stream
+		original.loadxlsx(user,xlsx,original.getNextnth(user),datetime.strptime(data["duration_start"], "%a %b %d %Y").date(),datetime.strptime(data["duration_end"], "%a %b %d %Y").date())
+		
+	else :
+		return jsonify({"code" : "err", "msg" : "Wrong extension"})
+
+	return jsonify({"code" : "success"})
 
 
 

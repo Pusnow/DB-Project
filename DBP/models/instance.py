@@ -11,6 +11,9 @@ from datetime import datetime
 import csv
 import io
 
+from openpyxl import Workbook
+from openpyxl import load_workbook
+
 def utf_8_encoder(unicode_csv_data):
 	for line in unicode_csv_data:
 		yield line.encode('utf-8')
@@ -83,6 +86,63 @@ class OriginalData (object):
 
 			dupset.add(unicode(crow))
 			writer.writerow(crow)
+			counter += 1
+
+
+		evaluator = User.randomEvaluator()
+		
+		parsedmodel =  self.parsedclass(nth,duration_start,duration_end,csvwrite,counter, counter - len(dupset))
+		parsedmodel.submitterid = submitter.id
+		parsedmodel.evaluatorid = evaluator.id
+
+		for col in schema :
+			setattr(parsedmodel,"null_" + col.name[4:] , nullcount[col.name] / (counter*1.0) )
+
+
+		self.parseds.append(parsedmodel)
+
+		session.commit()
+
+		return parsedmodel
+
+	def loadxlsx(self,submitter,xlsxread,nth,duration_start,duration_end):
+		wb = load_workbook(xlsxread)
+		ws = wb.active
+		csvwrite = io.BytesIO()
+		writer =  csv.writer(csvwrite, delimiter=',', quotechar="'")
+		maplist = self.mapList()
+		counter = 0
+		dupset = set()
+		dupcounter = 0
+		nullcount = dict()
+		schema = self.getSchema()
+		for col in schema:
+			nullcount[col.name] = 0
+
+
+		for rrow in ws.rows:
+			crow = list()
+			for mapnum, col in zip(maplist, schema):
+				if type(rrow[mapnum].value) == datetime:
+					crow.append(rrow[mapnum].value.strftime("%Y-%m-%d %H:%M"))
+				else :
+					crow.append(rrow[mapnum].value)
+
+				if rrow[mapnum].value == "":
+					nullcount[col.name] +=1
+
+
+
+			dupset.add(unicode(crow))
+
+			utfrow = list ()
+			for x in crow:
+				if type(x) == unicode :
+					utfrow.append(x.encode("utf8"))
+
+				else :
+					utfrow.append(x)
+			writer.writerow(utfrow)
 			counter += 1
 
 

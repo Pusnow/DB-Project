@@ -42,6 +42,7 @@ class Task(Base):
 	name = Column(Unicode(100), nullable = False)
 	information = Column(Text)
 	duration = Column(Integer, nullable = False)
+	status = Column(Enum("Collecting", "Stop"), nullable = False, server_default = "Collecting")
 
 
 	enroll = relationship("Enroll",lazy='dynamic', backref= "task")
@@ -169,7 +170,7 @@ class Task(Base):
 
 
 	def dict(self):
-		return {"prefix" : self.prefix, "name": self.name, "information" : self.information, "duration" : self.duration}
+		return {"prefix" : self.prefix, "name": self.name, "information" : self.information, "duration" : self.duration, "status" : self.status}
 
 
 	def getInfo(self):
@@ -303,6 +304,9 @@ class Task(Base):
 		csvwrite.seek(0)
 		return csvwrite
 
+	def setStatus(self,status):
+		self.status = status
+		session.commit()
 
 
 	@staticmethod

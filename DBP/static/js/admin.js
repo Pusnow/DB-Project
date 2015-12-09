@@ -240,6 +240,26 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     });
 
   }
+
+  $scope.taskstatus = function(prefix, status){
+    $scope.selectedIndex = 0;
+    $http.post('/admin/taskstatus',{"prefix" : prefix, "status" : status}) 
+      .success(function(data) { 
+        if (data.code == "success"){
+         $mdToast.show(
+          $mdToast.simple()
+          .content('태스크 상태 변경 성공')
+            .hideDelay(3000)
+          );
+         $scope.task = data.task;
+          initoriginalform();
+         }
+    }) 
+    .error(function(err) { 
+      console.log(err);
+    });
+
+  }
   $scope.changestatus = function(id,status){
     $http.post('/admin/changesubmitterstatus',{"prefix" : $scope.task.prefix , "id" :id , "status" : status}) 
       .success(function(data) { 

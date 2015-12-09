@@ -78,7 +78,12 @@ class User(Base):
 
 		for enroll in self.enrolls:
 			task = enroll.task.dict()
-			task["status"] = enrollcode[enroll.status]
+
+			if task["status"] == "Stop":
+				task["status"] = u"수집 종료"
+
+			else :
+				task["status"] = enrollcode[enroll.status]
 			enrolls.append(task)
 
 		return enrolls
@@ -124,6 +129,13 @@ class User(Base):
 		info["submitinfo"] = submitinfo
 		return info
 
+
+	def setStatus(self,status):
+		self.status = status
+		session.commit()
+
+
+		
 
 	@staticmethod
 	def randomEvaluator():

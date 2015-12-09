@@ -64,6 +64,18 @@ def task():
 	else :
 		return jsonify({"code" : "err", "msg" : "No task"})
 
+
+@app.route('/admin/taskstatus', methods=["POST"])
+def taskstatus():
+	data = request.get_json()
+	task = Task.getTask(data["prefix"])
+	if task :
+		task.setStatus(data["status"])
+
+		return jsonify({"code" : "success","task" : task.getInfo()})
+	else :
+		return jsonify({"code" : "err", "msg" : "No task"})
+
 @app.route('/admin/submitters', methods=["POST"])
 def submitters():
 	data = request.get_json()
@@ -82,6 +94,10 @@ def changesubmitterstatus():
 		return jsonify({"code" :"success"})
 	else :
 		return jsonify({"code" : "err", "msg" : "No task"})
+
+
+
+
 
 @app.route('/admin/neworiginal', methods=["POST"])
 def neworiginal():

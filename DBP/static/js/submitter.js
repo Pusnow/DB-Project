@@ -91,8 +91,9 @@ app.controller('SubmitterContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
   $scope.showoriginal = function(id){
     $http.post('/submitter/original',{"id" : id, "prefix" : $scope.task.prefix}) 
       .success(function(data) { 
-        console.log(data.original);
         $scope.original = data.original;
+        $scope.original.duration_start  = new Date();
+        $scope.original.duration_end  = new Date();
 
     }) 
     .error(function(err) { 
@@ -100,6 +101,7 @@ app.controller('SubmitterContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
     });
 
   }
+  
 
   $scope.showparsed = function(){
     $http.post('/submitter/parsed',{"prefix" : $scope.task.prefix}) 
@@ -123,13 +125,29 @@ app.controller('SubmitterContoller',['$scope', '$mdSidenav','$http', '$mdDialog'
 
         Upload.upload({
             url: '/submitter/submitoriginal',
-            data: {file: file, 'prefix': $scope.task.prefix, 'id' : $scope.original.id}
+            data: {file: file, 'prefix': $scope.task.prefix, 'id' : $scope.original.id, "duration_start" : $scope.original.duration_start.toDateString(),  "duration_end" : $scope.original.duration_end.toDateString()}
         }).then(function (resp) {
-            $mdToast.show(
-          $mdToast.simple()
-          .content('원본데이터타입 제출 성공!')
-            .hideDelay(3000)
+          console.log(resp)
+          if (resp.data.code == "success"){
+            $scope.showoriginal($scope.original.id)
+              $mdToast.show(
+            $mdToast.simple()
+            .content('원본데이터타입 제출 성공!')
+              .hideDelay(3000)
+            );
+            }
+            else {
+              $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.querySelector('#popupContainer')))
+            .clickOutsideToClose(true)
+            .title('오류')
+            .textContent("지원하지 않는 파일입니다.")
+            .ariaLabel('오류')
+            .ok('확인')
           );
+         }
+            
         }, function (resp) {
             console.log('Error status: ' + resp.status);
         }, function (evt) {
