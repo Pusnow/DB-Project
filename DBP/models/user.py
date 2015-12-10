@@ -56,6 +56,16 @@ class User(Base):
 
 
 	def dict(self):
+
+		tslist = []
+		for x in self.enrolls:
+			x.task.setTables()
+			ts = x.task.dict()
+			ts["parsednum"] = x.task.getParsedNumBySubmitter(self)
+			ts["tasknum"] = x.task.getTaskNumBySubmitter(self)
+			tslist.append(ts)
+
+
 		data = {"id" : self.id, 
 		"loginid" : self.loginid, 
 		"name" : self.name, 
@@ -64,7 +74,8 @@ class User(Base):
 		"role" : self.role,
 		"score" : self.score,
 		"birthstring" : self.birth,
-		"cellphone" : self.cellphone
+		"cellphone" : self.cellphone,
+		"tasks" : tslist
 		}
 		if data["birthstring"] :
 			data["birthstring"] = data["birthstring"].isoformat()

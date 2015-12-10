@@ -76,7 +76,11 @@ class Task(Base):
 		mapper(self.task, self.tasktable)
 
 		self.original.parsedclass = self.parsed
+		
 		self.parsed.taskclass = self.task
+		self.original.taskrow = self
+		self.parsed.taskrow = self
+		self.task.taskrow = self
 
 
 
@@ -147,6 +151,9 @@ class Task(Base):
 
 		self.original.parsedclass = self.parsed
 		self.parsed.taskclass = self.task
+		self.original.taskrow = self
+		self.parsed.taskrow = self
+		self.task.taskrow = self
 
 		return True
 
@@ -257,12 +264,25 @@ class Task(Base):
 	def getParsedNumBySubmitter(self,user):
 		return session.query(self.parsed).filter(self.parsed.submitterid == user.id).order_by(self.parsed.id).count()
 
+	def getTaskNumBySubmitter(self,user):
+		pslist = self.getParsedBySubmitter(user)
+		total = 0
+
+		for ps in pslist :
+			total += len(ps.tasks)
+		return  total
+
+
 
 	def addUser(self,user):
-		enroll = Enroll()
-		enroll.user = user
-		self.enroll.append(enroll)
-		session.commit()
+		
+
+		if self.enroll.filter(Enroll.userid == user.id).count() == 0 :
+			enroll = Enroll()
+			enroll.user = user
+			self.enroll.append(enroll)
+
+			session.commit()
 
 
 	def getSubmitters(self):
@@ -430,6 +450,22 @@ class Task(Base):
 
 		return evlist
 
+
+	@staticmethod
+	def getEvaluateAll(userid):
+		tasks = session.query(Task).all()
+		evlist = []
+
+		for task in tasks:
+			task.setTables()
+			pslist = session.query(task.parsed).filter(task.parsed.evaluatorid == userid).all()
+			for parsed in pslist:
+				p = parsed.dict()
+				p["taskprefix"] = task.prefix
+				p["taskname"] = task.name
+				evlist.append(p)
+
+		return evlist
 
 
 

@@ -197,7 +197,13 @@
               </md-list-item>
             </md-list>
           </md-content>
-          <md-content  flex >
+          <md-content  flex layout-fill>
+          <md-tabs class="" md-align-tabs="" layout-fill>
+            <md-tab id="tab1">
+              <md-tab-label>사용자 정보</md-tab-label>
+              <md-tab-body>
+
+            <h2>사용자 정보</h2>
             <div layout="row" layout-sm="column">
               <md-input-container flex>
                 <label>사용자 아이디</label>
@@ -240,10 +246,62 @@
               <label>주소</label>
               <textarea ng-model="user.address" columns="1" md-maxlength="255" rows="5"></textarea>
             </md-input-container>
-          
+            <h4>참여중인 태스크</h4>
+            <ul>
+              <li ng-repeat="task in user.tasks" >{{ task.name  | angular}} ({{ task.parsednum  | angular}} 개/{{ task.tasknum  | angular}} 개)</li>
+            </ul>
             <div layout="row" layout-sm="row" >
               <md-button flex class="md-raised md-primary" ng-click="edituser()">수정</md-button>
             </div>
+            
+            </md-tab-body>
+            </md-tab>
+            <md-tab id="tab2" md-on-select ="showuserparseds(user.id)" >
+              <md-tab-label>파싱 데이터 시퀀스 파일 보기</md-tab-label>
+              <md-tab-body>
+
+              <md-data-table-container flex>
+                  <table md-data-table class="md-primary" md-progress="deferred">
+                    <thead md-order="psquery.order">
+                      <tr>
+                        <th name = "다운로드"> </th>
+                        <th order-by="original" name="원본데이터타입"style="max-width : 40px"></th>
+                        <th  order-by="submitter" name="제출자" style="max-width : 30px"></th>
+                        <th numeric order-by="nth" name="회차 수" style="max-width : 10px"></th>
+                        <th  order-by="status" name="상태" style="max-width : 20px"></th>
+                        <th numeric order-by="tuplenum" name="튜플 수" style="max-width : 10px"></th>
+                        <th numeric order-by="duplicatetuplenum" name="중복 수" style="max-width : 20px"></th>
+                        <th numeric order-by="score" name="점수" style="max-width : 10px"></th>
+                        <th  order-by="duration_start" name="시작일" style="max-width : 15px"></th>
+                        <th  order-by="duration_end" name="종료일" style="max-width : 15px"></th>
+                        <th  order-by="pnp" name="P/NP" style="max-width : 20px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="psd in parsedlist | orderBy: psquery.order">
+                        <td><a href = "/evaluator/getfile/{{task.prefix | angular}}/{{psd.id | angular}}">link</a></td>
+                        <td>{{psd.original | angular}}</td>
+                        <td>{{psd.submitter | angular}}</td>
+                        <td>{{psd.nth | angular}}</td>
+                        <td>{{psd.status | angular}}</td>
+                        <td>{{psd.tuplenum | angular}}</td>
+                        <td>{{psd.duplicatetuplenum | angular}}</td>
+                        <td>{{psd.score | angular}}</td>
+                        <td>{{psd.duration_start | angular}}</td>
+                        <td>{{psd.duration_end | angular}}</td>
+                        <td>{{psd.pnp | angular}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </md-data-table-container>
+
+
+
+              </md-tab-body>
+
+              </md-tab>
+            </md-tabs>
+            </md-content>
           </div>
         </div>
     </div>

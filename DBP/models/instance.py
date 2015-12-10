@@ -94,7 +94,7 @@ class OriginalData (object):
 		parsedmodel =  self.parsedclass(nth,duration_start,duration_end,csvwrite,counter, counter - len(dupset))
 		parsedmodel.submitterid = submitter.id
 		parsedmodel.evaluatorid = evaluator.id
-
+		self.taskrow.addUser(evaluator)
 		for col in schema :
 			setattr(parsedmodel,"null_" + col.name[4:] , nullcount[col.name] / (counter*1.0) )
 
@@ -151,6 +151,9 @@ class OriginalData (object):
 		parsedmodel =  self.parsedclass(nth,duration_start,duration_end,csvwrite,counter, counter - len(dupset))
 		parsedmodel.submitterid = submitter.id
 		parsedmodel.evaluatorid = evaluator.id
+
+		self.taskrow.addUser(evaluator)
+		
 
 		for col in schema :
 			setattr(parsedmodel,"null_" + col.name[4:] , nullcount[col.name] / (counter*1.0) )

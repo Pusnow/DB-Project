@@ -196,6 +196,12 @@ def gettaskcsv(prefix):
 
 
 
+@app.route('/admin/userparsds', methods=["POST"])
+def userparsds():
+	data = request.get_json()
+	return jsonify({"parsedlist" : Task.getEvaluateAll(data["id"])})
+
+
 
 
 

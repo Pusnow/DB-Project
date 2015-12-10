@@ -421,6 +421,18 @@ app.controller('AdminController',['$scope', '$mdSidenav','$http', '$mdDialog', '
     $http.post('/logout').success(function(){location.reload();});
   }
 
+
+  $scope.showuserparseds = function (userid) {
+    $http.post('/admin/userparsds',{"id" : userid}).success(function(data){
+      $scope.psquery = {
+          order: 'id',
+          limit: 10,
+          page: 1
+        };
+      $scope.parsedlist = data.parsedlist
+  })
+}
+
   
 
 
