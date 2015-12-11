@@ -194,8 +194,6 @@ def gettaskcsv(prefix):
 
 
 
-
-
 @app.route('/admin/userparsds', methods=["POST"])
 def userparsds():
 	data = request.get_json()

@@ -100,17 +100,19 @@ def sbsubmitoriginal():
 	original = task.getOriginal(data["id"])
 
 
-
-	if request.files["file"].filename[-3:] == "csv":
-		csv = request.files["file"].stream
-		original.loadcsv(user,csv,original.getNextnth(user),datetime.strptime(data["duration_start"], "%a %b %d %Y").date(),datetime.strptime(data["duration_end"], "%a %b %d %Y").date())
-	elif request.files["file"].filename[-4:] == "xlsx" :
-		xlsx = request.files["file"].stream
-		original.loadxlsx(user,xlsx,original.getNextnth(user),datetime.strptime(data["duration_start"], "%a %b %d %Y").date(),datetime.strptime(data["duration_end"], "%a %b %d %Y").date())
-		
-	else :
+	try :
+		if request.files["file"].filename[-3:] == "csv":
+			csv = request.files["file"].stream
+			original.loadcsv(user,csv,original.getNextnth(user),datetime.strptime(data["duration_start"], "%a %b %d %Y").date(),datetime.strptime(data["duration_end"], "%a %b %d %Y").date())
+		elif request.files["file"].filename[-4:] == "xlsx" :
+			xlsx = request.files["file"].stream
+			original.loadxlsx(user,xlsx,original.getNextnth(user),datetime.strptime(data["duration_start"], "%a %b %d %Y").date(),datetime.strptime(data["duration_end"], "%a %b %d %Y").date())
+			
+		else :
+			return jsonify({"code" : "err", "msg" : "Wrong extension"})
+	except:
 		return jsonify({"code" : "err", "msg" : "Wrong extension"})
-
+		
 	return jsonify({"code" : "success"})
 
 
