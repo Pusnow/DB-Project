@@ -11,7 +11,7 @@ from sqlalchemy.dialects.mysql import INTEGER,VARCHAR,DATETIME
 import re
 import io
 import csv
-
+import datetime
 
 def typegen(sch):
 
@@ -309,7 +309,7 @@ class Task(Base):
 			row = list()
 
 			for sch in schema:
-				if sch["type"] == "datetime":
+				if sch["type"] == "datetime" or type(getattr(tupple, "sch_"+sch["name"])) == datetime.datetime:
 					if getattr(tupple, "sch_"+sch["name"]):
 						row.append(getattr(tupple, "sch_"+sch["name"]).strftime("%Y-%m-%d %H:%M"))
 					else :
